@@ -11,13 +11,12 @@ public:
 
 	void OnUpdate() override
 	{
-		//UME_INFO("TestLayer::Update");
+		UME_INFO("TestLayer::Update");
 	}
 
 	void OnEvent(Ume::Event& e) override
 	{
-		if (e.IsInCategory(Ume::EventCategoryApplication))
-			UME_TRACE("{0}", 1);
+		UME_TRACE("{0}", e);
 	}
 };
 
@@ -27,6 +26,7 @@ public:
 	Sandbox()
 	{
 		PushLayer(new TestLayer());
+		pushOverlay(new Ume::ImGuiLayer());
 ;	}
 
 	~Sandbox()

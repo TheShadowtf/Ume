@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Ume/vendor/GLFW/include"
+IncludeDir["glad"] = "Ume/vendor/glad/include"
 
 include "Ume/vendor/GLFW"
+include "Ume/vendor/glad"
 
 project "Ume"
     location "Ume"
@@ -36,12 +38,14 @@ project "Ume"
     {
         "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.glad}"
     }
 
     links
     {
         "GLFW",
+        "glad",
         "opengl32.lib"
     }
 
@@ -53,7 +57,8 @@ project "Ume"
         defines
         {
             "UME_PLATFORM_WINDOWS",
-            "UME_BUILD_DLL"
+            "UME_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
 
         postbuildcommands

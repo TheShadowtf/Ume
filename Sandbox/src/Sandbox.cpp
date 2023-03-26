@@ -1,4 +1,5 @@
 #include <Ume.h>
+#include <umepch.h>
 
 class TestLayer : public Ume::Layer
 {
@@ -10,12 +11,13 @@ public:
 
 	void OnUpdate() override
 	{
-		UME_INFO("TestLayer::Update");
+		//UME_INFO("TestLayer::Update");
 	}
 
-	void OnEvent(Ume::Event& event) override
+	void OnEvent(Ume::Event& e) override
 	{
-		UME_TRACE("{0}", event);
+		if (e.IsInCategory(Ume::EventCategoryApplication))
+			UME_TRACE("{0}", 1);
 	}
 };
 

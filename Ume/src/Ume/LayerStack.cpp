@@ -3,24 +3,16 @@
 
 namespace Ume 
 {
-
-	LayerStack::LayerStack()
-	{
-		m_LayerInsert = m_Layers.begin();
-	}
-
 	LayerStack::~LayerStack()
 	{
 		for (Layer* layer : m_Layers)
-		{
-			layer->OnDetach();
 			delete layer;
-		}
 	}
 
 	void LayerStack::PushLayer(Layer* layer)
 	{
-		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer);
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsert, layer);
+		m_LayerInsert++;
 	}
 
 	void LayerStack::PushOverlay(Layer* overlay)
@@ -33,7 +25,6 @@ namespace Ume
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), layer);
 		if (it != m_Layers.end())
 		{
-			layer->OnDetach();
 			m_Layers.erase(it);
 			m_LayerInsert--;
 		}
@@ -43,10 +34,6 @@ namespace Ume
 	{
 		auto it = std::find(m_Layers.begin(), m_Layers.end(), overlay);
 		if (it != m_Layers.end())
-		{
-			overlay->OnDetach();
 			m_Layers.erase(it);
-		}
 	}
-
 }

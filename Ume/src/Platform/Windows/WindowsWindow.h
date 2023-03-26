@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include "Ume/Window.h"
+#include <GLFW/glfw3.h>
 
 namespace Ume {
 

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Ume">
       <UniqueIdentifier>{EC2A880B-5834-887C-E1AF-9E7C4DB8937C}</UniqueIdentifier>
     </Filter>
@@ -9,6 +15,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ume.h" />
     <ClInclude Include="src\Ume\Application.h">
       <Filter>Ume</Filter>
@@ -34,28 +43,39 @@
     <ClInclude Include="src\Ume\KeyCodes.h">
       <Filter>Ume</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ume\Layer.h">
+      <Filter>Ume</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\LayerStack.h">
+      <Filter>Ume</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ume\Log.h">
       <Filter>Ume</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\MouseCodes.h">
       <Filter>Ume</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ume\Window.h">
+      <Filter>Ume</Filter>
+    </ClInclude>
     <ClInclude Include="src\umepch.h" />
-    <ClInclude Include="src\Ume\Window.h" />
-    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
-    <ClInclude Include="src\Ume\Layer.h" />
-    <ClInclude Include="src\Ume\LayerStack.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ume\Application.cpp">
+      <Filter>Ume</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Layer.cpp">
+      <Filter>Ume</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\LayerStack.cpp">
       <Filter>Ume</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\Log.cpp">
       <Filter>Ume</Filter>
     </ClCompile>
     <ClCompile Include="src\umepch.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
-    <ClCompile Include="src\Ume\Layer.cpp" />
-    <ClCompile Include="src\Ume\LayerStack.cpp" />
   </ItemGroup>
 </Project>

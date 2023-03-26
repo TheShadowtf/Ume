@@ -1,8 +1,7 @@
 #include <umepch.h>
+#include <glad/glad.h>
 
 #include "Application.h"
-
-#include <GLFW/glfw3.h>
 
 namespace Ume
 {
@@ -32,13 +31,13 @@ namespace Ume
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
-		UME_CORE_TRACE("{0}", e);
+		//UME_CORE_TRACE("{0}", e);
 
-		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); ++it)
+		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin(); )
 		{
+			(*--it)->OnEvent(e);
 			if (e.m_Handled)
 				break;
-			(*--it)->OnEvent(e);
 		}
 	}
 	

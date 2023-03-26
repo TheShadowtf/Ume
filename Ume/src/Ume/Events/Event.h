@@ -32,6 +32,7 @@ namespace Ume
 
 	class UME_API Event
 	{
+		friend class EventDispatcher;
 	public:
 		virtual ~Event() = default;
 
@@ -42,7 +43,7 @@ namespace Ume
 
 		bool m_Handled = false;
 
-		bool IsInCategory(EventCategory category)
+		inline bool IsInCategory(EventCategory category)
 		{
 			return GetCategoryFlags() & category;
 		}

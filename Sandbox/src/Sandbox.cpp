@@ -11,12 +11,17 @@ public:
 
 	void OnUpdate() override
 	{
-		UME_INFO("TestLayer::Update");
+		if (Ume::Input::IsKeyPressed(Ume::Tab))
+			UME_INFO("TestLayer::Update");
 	}
 
 	void OnEvent(Ume::Event& e) override
 	{
-		UME_TRACE("{0}", e);
+		if (e.GetEventType() == Ume::EventType::KeyPressed)
+		{
+			Ume::KeyPressedEvent& event = (Ume::KeyPressedEvent&)e;
+			UME_TRACE("{0}", (char)event.GetKeyCode());
+		}
 	}
 };
 

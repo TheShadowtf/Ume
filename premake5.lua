@@ -1,5 +1,6 @@
 workspace "Ume"
     architecture "x64"
+    startproject "Sandbox"
 
     configurations
     {
@@ -14,6 +15,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Ume/vendor/GLFW/include"
 IncludeDir["glad"] = "Ume/vendor/glad/include"
 IncludeDir["ImGui"] = "Ume/vendor/imgui"
+IncludeDir["glm"] = "Ume/vendor/glm"
 
 include "Ume/vendor/GLFW"
 include "Ume/vendor/glad"
@@ -34,7 +36,9 @@ project "Ume"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/glm/glm/**.hpp",
+        "%{prj.name}/vendor/glm/glm/**.inl"
     }
 
     includedirs
@@ -43,7 +47,8 @@ project "Ume"
         "%{prj.name}/vendor/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.glad}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}"
     }
 
     links
@@ -56,7 +61,7 @@ project "Ume"
 
     postbuildcommands
     {
-        ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+        ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
     }
 
     filter "system:windows"
@@ -104,7 +109,8 @@ project "Sandbox"
     includedirs
     {
         "Ume/vendor/spdlog/include",
-        "Ume/src"
+        "Ume/src",
+        "%{IncludeDir.glm}"
     }
 
     links

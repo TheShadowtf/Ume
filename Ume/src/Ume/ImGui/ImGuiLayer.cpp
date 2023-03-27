@@ -152,6 +152,16 @@ namespace Ume
 		return false;
 	}
 
+	const char* ImGuiLayer::OnGetClipboardEvent(void* user_data)
+	{
+		return glfwGetClipboardString((GLFWwindow*)user_data);
+	}
+
+	void ImGuiLayer::OnSetClipboardEvent(void* user_data, const char* text)
+	{
+		glfwSetClipboardString((GLFWwindow*)user_data, text);
+	}
+
 	bool ImGuiLayer::OnKeyTypedEvent(KeyTypedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();

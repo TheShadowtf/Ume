@@ -26,6 +26,8 @@ namespace Ume
 		bool OnKeyTypedEvent(KeyTypedEvent& e);
 		bool OnKeyPressedEvent(KeyPressedEvent& e);
 		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
+		const char* OnGetClipboardEvent(void* user_data);
+		void OnSetClipboardEvent(void* user_data, const char* text);
 	private:
 		float m_Time = 0.0f;
 	};

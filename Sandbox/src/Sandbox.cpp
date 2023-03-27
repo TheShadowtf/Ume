@@ -11,8 +11,7 @@ public:
 
 	void OnUpdate() override
 	{
-		if (Ume::Input::IsKeyPressed(Ume::Tab))
-			UME_INFO("TestLayer::Update");
+
 	}
 
 	void OnEvent(Ume::Event& e) override
@@ -31,7 +30,6 @@ public:
 	Sandbox()
 	{
 		PushLayer(new TestLayer());
-		pushOverlay(new Ume::ImGuiLayer());
 ;	}
 
 	~Sandbox()

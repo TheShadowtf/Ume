@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Ume/Window.h"
+#include "Ume/Renderer/GraphicsContext.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Ume {
@@ -25,6 +27,7 @@ namespace Ume {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{

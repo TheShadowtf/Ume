@@ -23,9 +23,10 @@ include "Ume/vendor/imgui"
 
 project "Ume"
     location "Ume"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
-    staticruntime "off"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -59,13 +60,12 @@ project "Ume"
         "opengl32.lib"
     }
 
-    postbuildcommands
+    defines
     {
-        ("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
+        "_CRT_SECURE_NO_WARNINGS"
     }
 
     filter "system:windows"
-        cppdialect "C++17"
         systemversion "latest"
 
         defines
@@ -73,29 +73,32 @@ project "Ume"
             "UME_PLATFORM_WINDOWS",
             "UME_BUILD_DLL",
             "GLFW_INCLUDE_NONE",
-            "IMGUI_IMPL_OPENGL_LOADER_CUSTOM"
+            "IMGUI_IMPL_OPENGL_LOADER_CUSTOM",
+            "_CRT_SECURE_NO_WARNINGS"
+
         }
 
     filter "configurations:Debug"
         defines "UME_DEBUG"
         runtime "Debug"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "UME_RELEASE"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "UME_DIST"
-        buildoptions "/MD"
-        optimize "On"
+        runtime "Release"
+        optimize "on"
 
 project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
     language "C++"
-    staticruntime "off"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -110,6 +113,7 @@ project "Sandbox"
     {
         "Ume/vendor/spdlog/include",
         "Ume/src",
+        "Ume/vendor",
         "%{IncludeDir.glm}"
     }
 
@@ -119,7 +123,6 @@ project "Sandbox"
     }
 
     filter "system:windows"
-        cppdialect "C++17"
         systemversion "latest"
 
         defines
@@ -130,14 +133,14 @@ project "Sandbox"
     filter "configurations:Debug"
         defines "UME_DEBUG"
         runtime "Debug"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "UME_RELEASE"
         runtime "Release"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "UME_DIST"
-        buildoptions "/MD"
-        optimize "On"
+        runtime "Release"
+        optimize "on"

@@ -2,6 +2,12 @@
 .vs/
 bin/
 bin-int/
+SandBox/
+scripts/
+Ume/
+vendor/
 
 # Files
 *.user
+premake5.lua
+Ume.sln

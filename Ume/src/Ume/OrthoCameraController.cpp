@@ -15,14 +15,14 @@ namespace Ume
 	void OrthoCameraController::OnUpdate(Timestep ts)
 	{
 		if (Input::IsKeyPressed(A))
-			m_CameraPos.x += m_CameraTransSpeed * ts;
-		else if (Input::IsKeyPressed(D))
 			m_CameraPos.x -= m_CameraTransSpeed * ts;
+		else if (Input::IsKeyPressed(D))
+			m_CameraPos.x += m_CameraTransSpeed * ts;
 
 		if (Input::IsKeyPressed(S))
-			m_CameraPos.y += m_CameraTransSpeed * ts;
-		else if (Input::IsKeyPressed(W))
 			m_CameraPos.y -= m_CameraTransSpeed * ts;
+		else if (Input::IsKeyPressed(W))
+			m_CameraPos.y += m_CameraTransSpeed * ts;
 
 		if (m_Rotation)
 		{

@@ -24,7 +24,7 @@ Start by cloning the repository with `https://github.com/TheShadowtf/Ume`.
 
 ## About
 
-This is a game engine build for me ot understand and learn more about programing and also to create a game engine to be easy for me to create games with it.
+This is a game engine build for me to understand and learn more about programing and also to create a game engine to be easy for me to create games with it.
 
 ### Main features
 

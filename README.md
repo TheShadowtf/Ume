@@ -2,7 +2,7 @@
 
 ![logo](logo.png)
 
-> Just a simple 2D game engine build with opengl.
+> Just a simple 2D and 3D game engine.
 
 ***
 

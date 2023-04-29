@@ -1,6 +1,6 @@
 # Ume
 
-![alt text](logo.png)
+![logo](logo.png)
 
 > Just a simple 2D game engine build with opengl.
 
@@ -35,6 +35,7 @@ This is a game engine build for me ot understand and learn more about programing
 - Support for multiple platforms like windows, linux, mac, etc.
 - Native rendering API support for OpenGL, Vulkan, DirectX, Metal (Again, hopefully :))
 - Native multiplayer suport (Hopefully using steam API but also creating my own multiplayer API if it's a correct term :))
+- A good documentation with a lot of examples
 
 ## Why?
 

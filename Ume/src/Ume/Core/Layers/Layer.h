@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core.h"
-#include "Events/Event.h"
+#include "Ume/Core/Core.h"
+#include "Ume/Events/Event.h"
 #include "Ume/Core/Timestep.h"
 
 namespace Ume 

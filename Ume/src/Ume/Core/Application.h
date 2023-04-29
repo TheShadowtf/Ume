@@ -2,13 +2,13 @@
 
 #include "Core.h"
 #include "Window.h"
-#include "LayerStack.h"
-#include "Events/Event.h"
-#include "ImGui/ImGuiLayer.h"
+#include "Ume/Core/Layers/LayerStack.h"
+#include "Ume/Events/Event.h"
+#include "Ume/ImGui/ImGuiLayer.h"
 #include "Ume/Core/Timestep.h"
 #include "Ume/Renderer/Shader.h"
 #include "Ume/Renderer/Buffer.h"
-#include "Events/ApplicationEvent.h"
+#include "Ume/Events/ApplicationEvent.h"
 #include "Ume/Renderer/VertexArray.h"
 #include "Ume/Renderer/OrthographicCamera.h"
 

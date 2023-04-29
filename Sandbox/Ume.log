@@ -1,9 +1,9 @@
-[21:10:57] [warning] Core: Initialized Log!
-[21:10:57] [info] Client: Hello! Var=5
-[21:10:57] [info] Core: Creating a window Ume Engine (1280, 720)
-[21:10:58] [info] Core: OpenGL Informations
-[21:10:58] [info] Core:    GL Vendor            : NVIDIA Corporation
-[21:10:58] [info] Core:    GL Renderer          : NVIDIA GeForce RTX 3070 Laptop GPU/PCIe/SSE2
-[21:10:58] [info] Core:    GL Version (string)  : 4.6.0 NVIDIA 531.41
-[21:10:58] [info] Core:    GL Version (integer) : 4 6
-[21:10:58] [info] Core:    GLSL Version         : 4.60 NVIDIA
+[22:37:25] [warning] Core: Initialized Log!
+[22:37:25] [info] Client: Hello! Var=5
+[22:37:25] [info] Core: Creating a window Ume Engine (1280, 720)
+[22:37:26] [info] Core: OpenGL Informations
+[22:37:26] [info] Core:    GL Vendor            : NVIDIA Corporation
+[22:37:26] [info] Core:    GL Renderer          : NVIDIA GeForce RTX 3070 Laptop GPU/PCIe/SSE2
+[22:37:26] [info] Core:    GL Version (string)  : 4.6.0 NVIDIA 531.41
+[22:37:26] [info] Core:    GL Version (integer) : 4 6
+[22:37:26] [info] Core:    GLSL Version         : 4.60 NVIDIA

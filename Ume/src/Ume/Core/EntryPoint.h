@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Log.h"
+#include "Ume/Core/Log/Log.h"
 #include "Application.h"
 
 #ifdef UME_PLATFORM_WINDOWS

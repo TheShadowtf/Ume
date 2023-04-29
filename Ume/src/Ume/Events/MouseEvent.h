@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.h"
-#include "Ume/MouseCodes.h"
+#include "Ume/Core/MouseCodes.h"
 
 namespace Ume 
 {

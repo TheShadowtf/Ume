@@ -1,8 +1,8 @@
 #include <umepch.h>
 #include "OrthoCameraController.h"
 
-#include "Ume/Input.h"
-#include "Ume/KeyCodes.h"
+#include "Ume/Core/Input.h"
+#include "Ume/Core/KeyCodes.h"
 
 namespace Ume
 {

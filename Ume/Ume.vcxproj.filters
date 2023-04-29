@@ -19,6 +19,12 @@
     <Filter Include="src\Ume\Core">
       <UniqueIdentifier>{BB05A7D3-A768-3678-50EE-6E2E3C3002FB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Ume\Core\Layers">
+      <UniqueIdentifier>{1A7C5E09-86DD-3B17-0F4B-82C97BAB72D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Ume\Core\Log">
+      <UniqueIdentifier>{0C83F4B6-F87B-1309-21AE-F88D0D06F314}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Ume\Events">
       <UniqueIdentifier>{0772A15E-F33F-9564-DCD3-058BC84071C9}</UniqueIdentifier>
     </Filter>
@@ -81,17 +87,38 @@
     <ClInclude Include="src\Ume.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\Application.h">
-      <Filter>src\Ume</Filter>
+    <ClInclude Include="src\Ume\Core\Application.h">
+      <Filter>src\Ume\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\Core.h">
-      <Filter>src\Ume</Filter>
+    <ClInclude Include="src\Ume\Core\Core.h">
+      <Filter>src\Ume\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\EntryPoint.h">
+      <Filter>src\Ume\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\Input.h">
+      <Filter>src\Ume\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\KeyCodes.h">
+      <Filter>src\Ume\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\Layers\Layer.h">
+      <Filter>src\Ume\Core\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\Layers\LayerStack.h">
+      <Filter>src\Ume\Core\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\Log\Log.h">
+      <Filter>src\Ume\Core\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\MouseCodes.h">
+      <Filter>src\Ume\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Core\Timestep.h">
       <Filter>src\Ume\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\EntryPoint.h">
-      <Filter>src\Ume</Filter>
+    <ClInclude Include="src\Ume\Core\Window.h">
+      <Filter>src\Ume\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Events\ApplicationEvent.h">
       <Filter>src\Ume\Events</Filter>
@@ -108,31 +135,13 @@
     <ClInclude Include="src\Ume\ImGui\ImGuiLayer.h">
       <Filter>src\Ume\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\Input.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\KeyCodes.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\Layer.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\LayerStack.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\Log.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\MouseCodes.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\OrthoCameraController.h">
-      <Filter>src\Ume</Filter>
-    </ClInclude>
     <ClInclude Include="src\Ume\Renderer\Buffer.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\GraphicsContext.h">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Renderer\OrthoCameraController.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\OrthographicCamera.h">
@@ -155,9 +164,6 @@
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\VertexArray.h">
       <Filter>src\Ume\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\Window.h">
-      <Filter>src\Ume</Filter>
     </ClInclude>
     <ClInclude Include="src\umepch.h">
       <Filter>src</Filter>
@@ -1439,8 +1445,17 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ume\Application.cpp">
-      <Filter>src\Ume</Filter>
+    <ClCompile Include="src\Ume\Core\Application.cpp">
+      <Filter>src\Ume\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Core\Layers\Layer.cpp">
+      <Filter>src\Ume\Core\Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Core\Layers\LayerStack.cpp">
+      <Filter>src\Ume\Core\Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Core\Log\Log.cpp">
+      <Filter>src\Ume\Core\Log</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\ImGui\ImGuiBuild.cpp">
       <Filter>src\Ume\ImGui</Filter>
@@ -1448,19 +1463,10 @@
     <ClCompile Include="src\Ume\ImGui\ImGuiLayer.cpp">
       <Filter>src\Ume\ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ume\Layer.cpp">
-      <Filter>src\Ume</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ume\LayerStack.cpp">
-      <Filter>src\Ume</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ume\Log.cpp">
-      <Filter>src\Ume</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ume\OrthoCameraController.cpp">
-      <Filter>src\Ume</Filter>
-    </ClCompile>
     <ClCompile Include="src\Ume\Renderer\Buffer.cpp">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Renderer\OrthoCameraController.cpp">
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\Renderer\OrthographicCamera.cpp">

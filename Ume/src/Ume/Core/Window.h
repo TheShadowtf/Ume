@@ -2,7 +2,7 @@
 
 #include <umepch.h>
 
-#include "Ume/Core.h"
+#include "Ume/Core/Core.h"
 #include "Ume/Events/Event.h"
 
 namespace Ume

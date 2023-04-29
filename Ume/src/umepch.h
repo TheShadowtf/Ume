@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Ume/Log.h"
+#include "Ume/Core/Log/Log.h"
 
 #ifdef UME_PLATFORM_WINDOWS
 #include <Windows.h>

@@ -5,7 +5,7 @@
 #include "Ume/Events/ApplicationEvent.h"
 #include "Ume/Events/MouseEvent.h"
 #include "Ume/Events/KeyEvent.h"
-#include "Ume/Log.h"
+#include "Ume/Core/Log/Log.h"
 
 #include "Platform/OpenGL/OpenGLContext.h"
 

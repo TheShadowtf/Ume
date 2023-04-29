@@ -1,102 +1,75 @@
-#include <umepch.h>
+#include "umepch.h"
 #include "Shader.h"
 
-#include <glad/glad.h>
+#include "Renderer.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Ume
 {
-	Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc)
+	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
-		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-		const GLchar* source = vertexSrc.c_str();
-		glShaderSource(vertexShader, 1, &source, 0);
-
-		glCompileShader(vertexShader);
-
-		GLint isCompiled = 0;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
+		switch (Renderer::GetRendererAPI())
 		{
-			GLint maxLength = 0;
-			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &infoLog[0]);
-
-			glDeleteShader(vertexShader);
-
-			UME_CORE_ERROR("{0}", infoLog.data());
-			UME_CORE_ASSERT(false, "Vertex shader compilation failure!");
-			return;
+		case RendererAPI::API::None:
+			UME_CORE_ASSERT(false, "RendererAPI::None is not suported");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGlShader>(name, vertexSrc, fragmentSrc);
 		}
+		UME_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
+	}
 
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-		source = fragmentSrc.c_str();
-		glShaderSource(fragmentShader, 1, &source, 0);
-
-		glCompileShader(fragmentShader);
-
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
+	Ref<Shader> Shader::Create(const std::string& filepath)
+	{
+		switch (Renderer::GetRendererAPI())
 		{
-			GLint maxLength = 0;
-			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &infoLog[0]);
-
-			glDeleteShader(fragmentShader);
-			glDeleteShader(vertexShader);
-
-			UME_CORE_ERROR("{0}", infoLog.data());
-			UME_CORE_ASSERT(false, "Fragment shader compilation failure!");
-			return;
+		case RendererAPI::API::None:
+			UME_CORE_ASSERT(false, "RendererAPI::None is not suported");
+			return nullptr;
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGlShader>(filepath);
 		}
-
-		m_RendererID = glCreateProgram();
-
-		glAttachShader(m_RendererID, vertexShader);
-		glAttachShader(m_RendererID, fragmentShader);
-
-		glLinkProgram(m_RendererID);
-
-		GLint isLinked = 0;
-		glGetProgramiv(m_RendererID, GL_LINK_STATUS, (int*)&isLinked);
-		if (isLinked == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetProgramiv(m_RendererID, GL_INFO_LOG_LENGTH, &maxLength);
-
-			std::vector<GLchar> infoLog(maxLength);
-			glGetProgramInfoLog(m_RendererID, maxLength, &maxLength, &infoLog[0]);
-
-			glDeleteProgram(m_RendererID);
-			glDeleteShader(vertexShader);
-			glDeleteShader(fragmentShader);
-
-			UME_CORE_ERROR("{0}", infoLog.data());
-			UME_CORE_ASSERT(false, "Shader link compilation failure!");
-			return;
-		}
-
-		glDetachShader(m_RendererID, vertexShader);
-		glDetachShader(m_RendererID, fragmentShader);
+		UME_CORE_ASSERT(false, "Unknown RendererAPI!");
+		return nullptr;
 	}
 
-	Shader::~Shader()
+	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
 	{
-		glDeleteProgram(m_RendererID);
+		UME_CORE_ASSERT(!Exists(name), "Shader already exists!");
+		m_Shaders[name] = shader;
 	}
 
-	void Shader::Bind() const
+	void ShaderLibrary::Add(const Ref<Shader>& shader)
 	{
-		glUseProgram(m_RendererID);
+		auto& name = shader->GetName();
+		Add(name, shader);
 	}
 
-	void Shader::Unbind() const
+	Ume::Ref<Ume::Shader> ShaderLibrary::Load(const std::string& filePath)
 	{
-		glUseProgram(0);
+		auto shader = Shader::Create(filePath);
+		Add(shader);
+		return shader;
 	}
+
+	Ume::Ref<Ume::Shader> ShaderLibrary::Load(const std::string& name, const std::string& filePath)
+	{
+		auto shader = Shader::Create(filePath);
+		Add(name, shader);
+		return shader;
+	}
+
+	Ume::Ref<Ume::Shader> ShaderLibrary::Get(const std::string& name)
+	{
+		UME_CORE_ASSERT(Exists(name), "Shader bot found!");
+		return m_Shaders[name];
+	}
+
+
+	bool ShaderLibrary::Exists(const std::string& name) const
+	{
+		return m_Shaders.find(name) != m_Shaders.end();
+	}
+
 }

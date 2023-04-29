@@ -43,3 +43,4 @@ I want to create this game engine because I don't really like Unity for some thi
 Will it be good? I hope so.
 If I will realase it, will it cost money? No, I want it to be free, maybe just make a patreon if you want to support and help me :)
 When will it be done? Idk, I'm too lazy to work on it :)
+Why the name Ume? I don't know, I was on discord with a frend and he said Ume. Idk why, but it sounds good :)

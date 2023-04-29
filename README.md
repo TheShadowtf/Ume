@@ -16,7 +16,9 @@ Start by cloning the repository with `https://github.com/TheShadowtf/Ume`.
 
 <ins>**2. Configuring the dependencies:**</ins>
 
-To create the project just run the ```Win-GenProj.bat``` witch is in the ```scripts``` folder.
+1. Add all the submodules using `git submodule add` command. The submodules will be in `Ume/vendor/`
+2. You need to download `premake` and put it in `vendor/bin/premake/` or anywhere else but you have to modify the path in the [Win-GenProj.bat](https://github.com/TheShadowtf/Ume/blob/dev/scripts/Win-GenProj.bat) found in `scripts` folder.
+3. To create the visual studio projects just run the `Win-GenProj.bat` found in the `scripts` folder.
 
 ***
 

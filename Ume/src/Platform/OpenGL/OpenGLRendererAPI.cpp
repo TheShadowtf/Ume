@@ -6,7 +6,10 @@ namespace Ume
 {
 	void OpenGLRendererAPI::Init()
 	{
+		UME_PROFILE_FUNC();
+
 		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -25,9 +28,11 @@ namespace Ume
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	void OpenGLRendererAPI::DrawIndex(const Ref<VertexArray>& vertexArray)
+	void OpenGLRendererAPI::DrawIndex(const Ref<VertexArray>& vertexArray, uint32_t indexCount)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		vertexArray->Bind();
+		uint32_t count = indexCount ? indexCount : vertexArray->GetIndexBuffer()->GetCount();
+		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 	}
 
 }

@@ -24,6 +24,8 @@ namespace Ume
 
 	void ImGuiLayer::OnAttach()
 	{
+		UME_PROFILE_FUNC();
+
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -56,6 +58,8 @@ namespace Ume
 
 	void ImGuiLayer::OnDetach()
 	{
+		UME_PROFILE_FUNC();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -63,6 +67,8 @@ namespace Ume
 
 	void ImGuiLayer::Begin()
 	{
+		UME_PROFILE_FUNC();
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -70,6 +76,8 @@ namespace Ume
 
 	void ImGuiLayer::End()
 	{
+		UME_PROFILE_FUNC();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
@@ -86,10 +94,10 @@ namespace Ume
 		}
 	}
 
-	void ImGuiLayer::OnImGuiRender()
-	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
-	}
+	//void ImGuiLayer::OnImGuiRender()
+	//{
+	//	static bool show = true;
+	//	ImGui::ShowDemoWindow(&show);
+	//}
 	
 }

@@ -5,7 +5,7 @@
 #include "Ume/Events/ApplicationEvent.h"
 #include "Ume/Events/MouseEvent.h"
 #include "Ume/Events/KeyEvent.h"
-#include "Ume/Core/Log/Log.h"
+#include "Ume/Core/Debug/Log.h"
 
 #include "Platform/OpenGL/OpenGLContext.h"
 
@@ -25,16 +25,21 @@ namespace Ume
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
 	{
+		UME_PROFILE_FUNC();
 		Init(props);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		UME_PROFILE_FUNC();
+
 		Shutdown();
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		UME_PROFILE_FUNC();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;
@@ -43,14 +48,18 @@ namespace Ume
 
 		if (!s_GLFWInitialized)
 		{
+			UME_PROFILE_SCOPE("glfwInit");
 			int success = glfwInit();
-			//UME_CORE_ASSERT(success, "Could not initialize GLFW!");
+			UME_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 
 			s_GLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		{
+			UME_PROFILE_SCOPE("glfwCreateWindow");
+			m_Window = glfwCreateWindow((int)props.Width, (int)props.Height, m_Data.Title.c_str(), nullptr, nullptr);
+		}
 
 		m_Context = new OpenGLContext(m_Window);
 		m_Context->Init();
@@ -150,17 +159,23 @@ namespace Ume
 
 	void WindowsWindow::Shutdown()
 	{
+		UME_PROFILE_FUNC();
+
 		glfwDestroyWindow(m_Window);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
+		UME_PROFILE_FUNC();
+
 		glfwPollEvents();
 		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enable)
 	{
+		UME_PROFILE_FUNC();
+
 		if (enable)
 			glfwSwapInterval(1);
 		else

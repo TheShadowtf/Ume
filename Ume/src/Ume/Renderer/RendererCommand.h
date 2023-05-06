@@ -27,7 +27,7 @@ namespace Ume
 			s_RendererAPI->Clear(color);
 		}
 
-		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray) { s_RendererAPI->DrawIndex(vertexArray); }
+		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray, uint32_t indexCound = 0) { s_RendererAPI->DrawIndex(vertexArray, indexCound); }
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

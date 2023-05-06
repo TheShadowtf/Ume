@@ -1,5 +1,6 @@
 #include <umepch.h>
 #include "Renderer.h"
+#include "Renderer2D.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -9,7 +10,10 @@ namespace Ume
 
 	void Renderer::Init()
 	{
+		UME_PROFILE_FUNC();
+
 		RendererCommand::Init();
+		Renderer2D::Init();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

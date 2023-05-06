@@ -7,7 +7,7 @@
 
 namespace Ume
 {
-	VertexArray* VertexArray::Create()
+	Ref<VertexArray> VertexArray::Create()
 	{
 		switch (Renderer::GetRendererAPI())
 		{
@@ -15,7 +15,7 @@ namespace Ume
 			UME_CORE_ASSERT(false, "RendererAPI::None is not suported");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexArray();
+			return std::make_shared<OpenGLVertexArray>();
 		}
 		UME_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;

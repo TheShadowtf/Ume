@@ -134,12 +134,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Sandbox.cpp" />
+    <ClCompile Include="src\Game\GameLayer.cpp" />
+    <ClCompile Include="src\Game\GameLayer.h" />
+    <ClCompile Include="src\Game\Sandbox.cpp" />
+    <ClCompile Include="src\ParticleSystem.cpp" />
+    <ClCompile Include="src\Sandbox2D.cpp" />
+    <ClCompile Include="src\Game\Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ume\Ume.vcxproj">
       <Project>{EC2A880B-5834-887C-E1AF-9E7C4DB8937C}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ParticleSystem.h" />
+    <ClInclude Include="src\Sandbox2D.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\FlatColor.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,6 +20,8 @@ namespace Ume
 
 	OpenGlShader::OpenGlShader(const std::string& filepath)
 	{
+		UME_PROFILE_FUNC();
+
 		std::string src = ReadFile(filepath);
 		auto shaderSrc = PreProcess(src);
 		Compile(shaderSrc);
@@ -33,6 +35,8 @@ namespace Ume
 
 	OpenGlShader::OpenGlShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc) : m_Name(name)
 	{
+		UME_PROFILE_FUNC();
+
 		std::unordered_map<GLenum, std::string> src;
 		src[GL_VERTEX_SHADER] = vertexSrc;
 		src[GL_FRAGMENT_SHADER] = fragmentSrc;
@@ -41,6 +45,8 @@ namespace Ume
 
 	std::unordered_map<GLenum, std::string> OpenGlShader::PreProcess(const std::string& src)
 	{
+		UME_PROFILE_FUNC();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -67,11 +73,15 @@ namespace Ume
 
 	OpenGlShader::~OpenGlShader()
 	{
+		UME_PROFILE_FUNC();
+
 		glDeleteProgram(m_RendererID);
 	}
 
 	std::string OpenGlShader::ReadFile(const std::string& filepath)
 	{
+		UME_PROFILE_FUNC();
+
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 
@@ -92,6 +102,8 @@ namespace Ume
 
 	void OpenGlShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSrc)
 	{
+		UME_PROFILE_FUNC();
+
 		GLuint program = glCreateProgram();
 		UME_CORE_ASSERT(shaderSrc.size() <= 2, "We only support 2 shaders!");
 		std::array<GLenum, 2> glShaderIDs;
@@ -158,12 +170,65 @@ namespace Ume
 
 	void OpenGlShader::Bind() const
 	{
+		UME_PROFILE_FUNC();
+
 		glUseProgram(m_RendererID);
 	}
 
 	void OpenGlShader::Unbind() const
 	{
+		UME_PROFILE_FUNC();
+
 		glUseProgram(0);
+	}
+
+	void OpenGlShader::SetInt(const std::string name, int value)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformInt(name, value);
+	}
+
+	void OpenGlShader::SetMat4(const std::string name, const glm::mat4 value)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformMat4(name, value);
+	}
+
+	void OpenGlShader::SetFloat4(const std::string name, const glm::vec4 value)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformFloat4(name, value);
+	}
+
+	void OpenGlShader::SetFloat3(const std::string name, const glm::vec3 value)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformFloat3(name, value);
+	}
+
+	void OpenGlShader::SetFloat2(const std::string name, const glm::vec2 value)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformFloat2(name, value);
+	}
+
+	void OpenGlShader::SetFloat(const std::string name, float value)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformFloat(name, value);
+	}
+
+	void OpenGlShader::SetIntArray(const std::string name, int* values, uint32_t count)
+	{
+		UME_PROFILE_FUNC();
+
+		UploadUniformIntArray(name, values, count);
 	}
 
 	void OpenGlShader::UploadUniformInt(const std::string& name, int values)
@@ -208,4 +273,11 @@ namespace Ume
 		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
+
+	void OpenGlShader::UploadUniformIntArray(const std::string& name, int* values, uint32_t count)
+	{
+		GLint location = glGetUniformLocation(m_RendererID, name.c_str());
+		glUniform1iv(location, count, values);
+	}
+
 }

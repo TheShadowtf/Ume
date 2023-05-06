@@ -24,7 +24,7 @@ namespace Ume
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
-		void pushOverlay(Layer* layer);
+		void PushOverlay(Layer* layer);
 
 		inline static Application& Get() { return *s_Instance; }
 

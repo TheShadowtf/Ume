@@ -38,11 +38,15 @@ namespace Ume
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		UME_PROFILE_FUNC();
+
 		glCreateVertexArrays(1, &m_RendererID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		UME_PROFILE_FUNC();
+
 		glDeleteVertexArrays(1, &m_RendererID);
 	}
 
@@ -58,6 +62,8 @@ namespace Ume
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
+		UME_PROFILE_FUNC();
+
 		UME_CORE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertrex buffer has no lauout!");
 		glBindVertexArray(m_RendererID);
 		vertexBuffer->Bind();
@@ -75,6 +81,8 @@ namespace Ume
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
+		UME_PROFILE_FUNC();
+
 		glBindVertexArray(m_RendererID);
 		indexBuffer->Bind();
 

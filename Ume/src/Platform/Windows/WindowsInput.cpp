@@ -31,7 +31,7 @@ namespace Ume
 		double xPos, yPos;
 
 		glfwGetCursorPos(window, &xPos, &yPos);
-		return { (float)yPos, (float)yPos };
+		return { (float)xPos, (float)yPos };
 	}
 
 	float WindowsInput::GetMouseXImpl()

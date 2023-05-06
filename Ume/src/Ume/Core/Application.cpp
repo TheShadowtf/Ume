@@ -13,6 +13,8 @@ namespace Ume
 
 	Application::Application()
 	{
+		UME_PROFILE_FUNC();
+
 		UME_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
@@ -23,28 +25,34 @@ namespace Ume
 		Renderer::Init();
 
 		m_ImGuiLayer = new ImGuiLayer();
-		pushOverlay(m_ImGuiLayer);
+		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
 	{
-
+		UME_PROFILE_FUNC();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		UME_PROFILE_FUNC();
+
 		m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
-	void Application::pushOverlay(Layer* layer)
+	void Application::PushOverlay(Layer* layer)
 	{
+		UME_PROFILE_FUNC();
+
 		m_LayerStack.PushOverlay(layer);
 		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e)
 	{
+		UME_PROFILE_FUNC();
+
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClosed));
 		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
@@ -59,24 +67,31 @@ namespace Ume
 	
 	void Application::Run()
 	{
+		UME_PROFILE_FUNC();
+
 		while (m_Running)
 		{
+			UME_PROFILE_SCOPE("Run loop");
 			float time = (float)glfwGetTime();
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
 			if (!m_Minimized)
 			{
-				for (Layer* layer : m_LayerStack)
-					layer->OnUpdate(timestep);
+				{
+					UME_PROFILE_SCOPE("Layer update");
+					for (Layer* layer : m_LayerStack)
+						layer->OnUpdate(timestep);
+				}
+				m_ImGuiLayer->Begin();
+
+				{
+					UME_PROFILE_SCOPE("Layer imgui update");
+					for (Layer* layer : m_LayerStack)
+						layer->OnImGuiRender();
+					m_ImGuiLayer->End();
+				}
 			}
-
-			m_ImGuiLayer->Begin();
-
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiRender();
-
-			m_ImGuiLayer->End();
 			m_Window->OnUpdate();
 		}
 	}
@@ -89,6 +104,8 @@ namespace Ume
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		UME_PROFILE_FUNC();
+
 		if(e.GetWidth() == 0 || e.GetHeight() == 0)
 		{
 			m_Minimized = true;

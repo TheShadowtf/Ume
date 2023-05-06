@@ -108,7 +108,7 @@
     <ClInclude Include="src\Ume\Core\Layers\LayerStack.h">
       <Filter>src\Ume\Core\Layers</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\Core\Log\Log.h">
+    <ClInclude Include="src\Ume\Core\Debug\Log.h">
       <Filter>src\Ume\Core\Log</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Core\MouseCodes.h">
@@ -1419,6 +1419,10 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ume\Renderer\Renderer2D.h" />
+    <ClInclude Include="src\Ume\Core\Debug\Instrumentor.h" />
+    <ClInclude Include="src\Ume\Core\CoreSettings.h" />
+    <ClInclude Include="src\Ume\Math\Random.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1454,7 +1458,7 @@
     <ClCompile Include="src\Ume\Core\Layers\LayerStack.cpp">
       <Filter>src\Ume\Core\Layers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ume\Core\Log\Log.cpp">
+    <ClCompile Include="src\Ume\Core\Debug\Log.cpp">
       <Filter>src\Ume\Core\Log</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\ImGui\ImGuiBuild.cpp">
@@ -1496,5 +1500,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ume\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\Ume\Math\Random.cpp" />
   </ItemGroup>
 </Project>

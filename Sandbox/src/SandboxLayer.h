@@ -2,13 +2,11 @@
 
 #include <Ume.h>
 
-#include "ParticleSystem.h"
-
-class Sandbox2D : public Ume::Layer
+class EditorLayer : public Ume::Layer
 {
 public:
-	Sandbox2D();
-	virtual ~Sandbox2D() = default;
+	EditorLayer();
+	virtual ~EditorLayer() = default;
 	virtual void OnAttach() override;
 	virtual void OnDetach() override;
 	virtual void OnImGuiRender() override;
@@ -19,10 +17,7 @@ private:
 
 	Ume::Ref<Ume::VertexArray>  m_SquareVA;
 	Ume::Ref<Ume::Shader>       m_FlatColorShader;
-	Ume::Ref<Ume::Texture2D>    m_Texture;
+	Ume::Ref<Ume::Texture2D>    m_TextureCheck;
 
 	glm::vec4 m_SquareColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-	ParticleSystem m_ParticleSystem;
-	ParticleProps m_Particle;
 };

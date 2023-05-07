@@ -24,15 +24,18 @@ namespace Ume
 
 		void OnUpdate(Timestep ts);
 		void OnEvent(Event& e);
+		void Resize(float wdth, float height);
 
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
 
-		void SetZoomLevel(float level) { m_ZoomLevel = level; }
+		void SetZoomLevel(float level) { m_ZoomLevel = level; CalculateView(); }
 		float GetZoomLevel() const { return m_ZoomLevel; }
 
 		const OrthographicCameraBounds& GetBounds() const { return m_Bounds; }
 	private:
+		void CalculateView();
+
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnWindowResized(WindowResizeEvent& e);
 	private:

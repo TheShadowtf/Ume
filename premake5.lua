@@ -17,10 +17,13 @@ IncludeDir["glad"] = "Ume/vendor/glad/include"
 IncludeDir["ImGui"] = "Ume/vendor/imgui"
 IncludeDir["glm"] = "Ume/vendor/glm"
 IncludeDir["stb_image"] = "Ume/vendor/stb_image"
+IncludeDir["entt"] = "Ume/vendor/entt/include"
 
-include "Ume/vendor/GLFW"
-include "Ume/vendor/glad"
-include "Ume/vendor/imgui"
+group "Dependedncies"
+    include "Ume/vendor/GLFW"
+    include "Ume/vendor/glad"
+    include "Ume/vendor/imgui"
+group""
 
 project "Ume"
     location "Ume"
@@ -53,7 +56,8 @@ project "Ume"
         "%{IncludeDir.glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}"
     }
 
     links
@@ -119,6 +123,59 @@ project "Sandbox"
         "Ume/src",
         "Ume/vendor",
         "%{IncludeDir.glm}"
+    }
+
+    links
+    {
+        "Ume"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines
+        {
+            "UME_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "UME_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "UME_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "UME_DIST"
+        runtime "Release"
+        optimize "on"
+
+project "Ume-Editor"
+    location "Ume-Editor"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp"
+    }
+
+    includedirs
+    {
+        "Ume/vendor/spdlog/include",
+        "Ume/src",
+        "Ume/vendor",
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}"
     }
 
     links

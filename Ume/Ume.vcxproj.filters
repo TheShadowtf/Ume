@@ -19,17 +19,20 @@
     <Filter Include="src\Ume\Core">
       <UniqueIdentifier>{BB05A7D3-A768-3678-50EE-6E2E3C3002FB}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Ume\Core\Debug">
+      <UniqueIdentifier>{71308B45-5D14-4C9B-C674-46EEB277361D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Ume\Core\Layers">
       <UniqueIdentifier>{1A7C5E09-86DD-3B17-0F4B-82C97BAB72D6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\Ume\Core\Log">
-      <UniqueIdentifier>{0C83F4B6-F87B-1309-21AE-F88D0D06F314}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Ume\Events">
       <UniqueIdentifier>{0772A15E-F33F-9564-DCD3-058BC84071C9}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Ume\ImGui">
       <UniqueIdentifier>{ED82F248-5943-6E7F-227E-B7FC8EFDB25B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Ume\Math">
+      <UniqueIdentifier>{3C46ACD3-28A9-3B78-D12E-742EBD7007FB}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Ume\Renderer">
       <UniqueIdentifier>{891EC183-7517-E0D5-9E49-C55A8AA1BFE1}</UniqueIdentifier>
@@ -66,6 +69,9 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
@@ -78,9 +84,6 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
-      <Filter>src\Platform\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -92,6 +95,15 @@
     </ClInclude>
     <ClInclude Include="src\Ume\Core\Core.h">
       <Filter>src\Ume\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\CoreSettings.h">
+      <Filter>src\Ume\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\Debug\Instrumentor.h">
+      <Filter>src\Ume\Core\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Core\Debug\Log.h">
+      <Filter>src\Ume\Core\Debug</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Core\EntryPoint.h">
       <Filter>src\Ume\Core</Filter>
@@ -107,9 +119,6 @@
     </ClInclude>
     <ClInclude Include="src\Ume\Core\Layers\LayerStack.h">
       <Filter>src\Ume\Core\Layers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Ume\Core\Debug\Log.h">
-      <Filter>src\Ume\Core\Log</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Core\MouseCodes.h">
       <Filter>src\Ume\Core</Filter>
@@ -135,7 +144,13 @@
     <ClInclude Include="src\Ume\ImGui\ImGuiLayer.h">
       <Filter>src\Ume\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ume\Math\Random.h">
+      <Filter>src\Ume\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ume\Renderer\Buffer.h">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Renderer\Framebuffer.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\GraphicsContext.h">
@@ -150,6 +165,9 @@
     <ClInclude Include="src\Ume\Renderer\Renderer.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ume\Renderer\Renderer2D.h">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ume\Renderer\RendererAPI.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
@@ -157,6 +175,9 @@
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\Shader.h">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Renderer\SubTexture2D.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\Texture.h">
@@ -1419,16 +1440,18 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\Ume\Core\Debug\Instrumentor.h" />
-    <ClInclude Include="src\Ume\Core\CoreSettings.h" />
-    <ClInclude Include="src\Ume\Math\Random.h" />
+    <ClInclude Include="src\Ume\Scene\Scene.h" />
+    <ClInclude Include="src\Ume\Scene\Components.h" />
+    <ClInclude Include="src\Ume\Scene\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -1452,14 +1475,14 @@
     <ClCompile Include="src\Ume\Core\Application.cpp">
       <Filter>src\Ume\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ume\Core\Debug\Log.cpp">
+      <Filter>src\Ume\Core\Debug</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ume\Core\Layers\Layer.cpp">
       <Filter>src\Ume\Core\Layers</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\Core\Layers\LayerStack.cpp">
       <Filter>src\Ume\Core\Layers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Ume\Core\Debug\Log.cpp">
-      <Filter>src\Ume\Core\Log</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\ImGui\ImGuiBuild.cpp">
       <Filter>src\Ume\ImGui</Filter>
@@ -1467,7 +1490,13 @@
     <ClCompile Include="src\Ume\ImGui\ImGuiLayer.cpp">
       <Filter>src\Ume\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ume\Math\Random.cpp">
+      <Filter>src\Ume\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ume\Renderer\Buffer.cpp">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Renderer\Framebuffer.cpp">
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\Renderer\OrthoCameraController.cpp">
@@ -1479,6 +1508,9 @@
     <ClCompile Include="src\Ume\Renderer\Renderer.cpp">
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ume\Renderer\Renderer2D.cpp">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Ume\Renderer\RendererAPI.cpp">
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
@@ -1486,6 +1518,9 @@
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\Renderer\Shader.cpp">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Renderer\SubTexture2D.cpp">
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Ume\Renderer\Texture.cpp">
@@ -1500,7 +1535,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ume\Renderer\Renderer2D.cpp" />
-    <ClCompile Include="src\Ume\Math\Random.cpp" />
+    <ClCompile Include="src\Ume\Scene\Scene.cpp" />
   </ItemGroup>
 </Project>

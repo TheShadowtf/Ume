@@ -9,6 +9,8 @@
 #include "Ume/ImGui/ImGuiLayer.h"
 
 #include "Ume/Core/Timestep.h"
+#include "Ume/Scene/Scene.h"
+#include "Ume/Scene/Components.h"
 
 #include "Ume/Renderer/Renderer.h"
 #include "Ume/Renderer/Renderer2D.h"
@@ -18,4 +20,6 @@
 #include "Ume/Renderer/OrthographicCamera.h"
 #include "Ume/Renderer/OrthoCameraController.h"
 #include "Ume/Renderer/Shader.h"
+#include "Ume/Renderer/Framebuffer.h"
 #include "Ume/Renderer/Texture.h"
+#include "Ume/Renderer/SubTexture2D.h"

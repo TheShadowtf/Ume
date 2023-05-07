@@ -69,14 +69,20 @@ namespace Ume
 		dispatcher.Dispatch<WindowResizeEvent>(UME_BIND_EVENT_FN(OrthoCameraController::OnWindowResized));
 	}
 
+	void OrthoCameraController::CalculateView()
+	{
+		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
+		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+	}
+
 	bool OrthoCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
 		UME_PROFILE_FUNC();
 
 		m_ZoomLevel -= e.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+		CalculateView();
+
 		return false;
 	}
 
@@ -84,10 +90,14 @@ namespace Ume
 	{
 		UME_PROFILE_FUNC();
 
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Bounds = { -m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel };
-		m_Camera.SetProjection(m_Bounds.Left, m_Bounds.Right, m_Bounds.Bottom, m_Bounds.Top);
+		Resize((float)e.GetWidth(), (float)e.GetHeight());
 		return false;
+	}
+
+	void OrthoCameraController::Resize(float width, float height)
+	{
+		m_AspectRatio = width / height;
+		CalculateView();
 	}
 
 }

@@ -17,7 +17,7 @@ namespace Ume
 	class UME_API Application
 	{
 	public:
-		Application();
+		Application(const std::string& name = "Ume App");
 		virtual ~Application();
 
 		void Run();
@@ -29,6 +29,10 @@ namespace Ume
 		inline static Application& Get() { return *s_Instance; }
 
 		inline Window& GetWindow() { return *m_Window;  }
+
+		void Close();
+
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 	private:
 		bool OnWindowClosed(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);

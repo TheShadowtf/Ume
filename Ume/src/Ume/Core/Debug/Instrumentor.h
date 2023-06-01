@@ -137,7 +137,7 @@ namespace Ume
 	};
 }
 
-#define UME_PROFILE 1
+#define UME_PROFILE 0
 
 #if UME_PROFILE
 	#define UME_PROFILE_BEGIN_SESSION(name, filepath) ::Ume::Instrumentor::Get().BeginSession(name, filepath)

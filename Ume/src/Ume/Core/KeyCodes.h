@@ -5,7 +5,6 @@
 namespace Ume
 {
 	using KeyCode = uint16_t;
-
 	enum : KeyCode
 	{
 		// From glfw3.h

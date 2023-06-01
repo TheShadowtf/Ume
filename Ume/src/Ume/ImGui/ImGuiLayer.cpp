@@ -36,6 +36,9 @@ namespace Ume
 		//io.ConfigViewportsNoAutoMerge = true;
 		//io.ConfigViewportsNoTaskBarIcon = true;
 
+		io.Fonts->AddFontFromFileTTF("assets/fonts/open-sans/OpenSans-Bold.ttf", 18.0f);
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/fonts/open-sans/OpenSans-Regular.ttf", 18.0f);
+
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();
 		//ImGui::StyleColorsLight();

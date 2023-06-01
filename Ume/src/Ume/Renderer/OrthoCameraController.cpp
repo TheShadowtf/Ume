@@ -16,7 +16,7 @@ namespace Ume
 	{
 		UME_PROFILE_FUNC();
 
-		if (Input::IsKeyPressed(A))
+		/*if (Input::IsKeyPressed(A))
 		{
 			m_CameraPos.x -= cos(glm::radians(m_CameraRot)) * m_CameraTransSpeed * ts;
 			m_CameraPos.y -= sin(glm::radians(m_CameraRot)) * m_CameraTransSpeed * ts;
@@ -53,7 +53,7 @@ namespace Ume
 				m_CameraRot += 360.0f;
 
 			m_Camera.SetRotation(m_CameraRot);
-		}
+		}*/
 
 		m_Camera.SetPosition(m_CameraPos);
 

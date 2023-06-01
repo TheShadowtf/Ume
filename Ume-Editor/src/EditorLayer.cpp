@@ -21,17 +21,56 @@ namespace Ume
 		FramebufferSpecs fbSpecs;
 		fbSpecs.width = 1280;
 		fbSpecs.height = 720;
-
 		m_FrameBuffer = Framebuffer::Create(fbSpecs);
 
-		// Entity
-		//Ume::Entity square = m_ActiveScene->CreateEntity();
-		//square.AddComponent<TransformComponent>();
-
 		m_ActiveScene = CreateRef<Scene>();
-		m_SqareEntity = m_ActiveScene->CreateEntity();
-		m_ActiveScene->Reg().emplace<TransformComponent>(m_SqareEntity);
-		m_ActiveScene->Reg().emplace<SpriteRendererComponent>(m_SqareEntity, glm::vec4{ 0.0f, 1.0, 0.0f, 1.0f });
+
+		// Entity
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0, 0.0f, 1.0f });
+
+		m_RedSquareEntity = m_ActiveScene->CreateEntity("Red Square");
+		m_RedSquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0, 0.0f, 1.0f });
+
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
+		m_CameraEntity.AddComponent<CameraComponent>();
+
+		m_SecondCamEntity = m_ActiveScene->CreateEntity("Camera B");
+		m_SecondCamEntity.AddComponent<CameraComponent>().primary = false;
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			void OnCreate()
+			{
+				auto& translation = GetComponent<TransformComponent>().Translation;
+				translation.x = rand() % 10 - 5.0f;
+			}
+
+			void OnDestroy()
+			{
+
+			}
+
+			void OnUpdate(Timestep ts)
+			{
+				auto& translation = GetComponent<TransformComponent>().Translation;
+				float speed = 5.0f;
+
+				if (Input::IsKeyPressed(A))
+					translation.x -= speed * ts;
+				if (Input::IsKeyPressed(D))
+					translation.x += speed * ts;
+				if (Input::IsKeyPressed(W))
+					translation.y += speed * ts;
+				if (Input::IsKeyPressed(S))
+					translation.y -= speed * ts;
+			}
+		};
+
+		m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+
+		m_SceneHierarchyPanel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -43,6 +82,15 @@ namespace Ume
 	{
 		UME_PROFILE_FUNC("Sandbox2D::OnUpdate");
 
+		FramebufferSpecs spec = m_FrameBuffer->GetSpecs();
+		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.width != m_ViewportSize.x || spec.height != m_ViewportSize.y))
+		{
+			m_FrameBuffer->Resize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.Resize(m_ViewportSize.x, m_ViewportSize.y);
+
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
+
 		if (m_ViewportFocused)
 			m_CameraController.OnUpdate(ts);
 
@@ -52,24 +100,7 @@ namespace Ume
 		RendererCommand::Clear();
 
 
-		Renderer2D::BeginScene(m_CameraController.GetCamera());
 		m_ActiveScene->OnUpdate(ts);
-
-		Renderer2D::EndScene();
-
-
-		/*Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		for (float y = -5.0f; y < 5.0f; y += 0.5f)
-		{
-			for (float x = -5.0f; x < 5.0f; x += 0.5f)
-			{
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-				Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-			}
-		}
-
-		Renderer2D::EndScene();*/
 		m_FrameBuffer->Unbind();
 	}
 
@@ -127,7 +158,9 @@ namespace Ume
 			ImGui::EndMenuBar();
 		}
 
-		ImGui::Begin("Setting");
+		m_SceneHierarchyPanel.OnImGuiRender();
+
+		ImGui::Begin("Stats");
 
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("Renderer2D Stats:");
@@ -136,9 +169,6 @@ namespace Ume
 		ImGui::Text("Vertices: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", stats.GetTotalIndexCount());
 
-		auto& squareColor = m_ActiveScene->Reg().get<SpriteRendererComponent>(m_SqareEntity).color;
-
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
@@ -148,12 +178,8 @@ namespace Ume
 		Application::Get().GetImGuiLayer()->BlockImGuiEvents(!m_ViewportFocused || !m_ViewportHovered);
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
-		{
-			m_FrameBuffer->Resize((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-			m_CameraController.Resize(viewportPanelSize.x, viewportPanelSize.y);
-		}
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
 		uint32_t textureID = m_FrameBuffer->GetColorAttachment();
 		ImGui::Image((void*)textureID, ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();

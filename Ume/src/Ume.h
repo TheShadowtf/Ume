@@ -10,7 +10,9 @@
 
 #include "Ume/Core/Timestep.h"
 #include "Ume/Scene/Scene.h"
+#include "Ume/Scene/Entity.h"
 #include "Ume/Scene/Components.h"
+#include "Ume/Scene/ScriptableEntity.h"
 
 #include "Ume/Renderer/Renderer.h"
 #include "Ume/Renderer/Renderer2D.h"

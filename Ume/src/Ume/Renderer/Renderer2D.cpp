@@ -121,6 +121,21 @@ namespace Ume
 		s_Data.textureSlotIndex = 1;
 	}
 
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4 transform)
+	{
+		UME_PROFILE_FUNC();
+
+		glm::mat4 viewProj = camera.GetProjection() * glm::inverse(transform);
+
+		s_Data.textureShader->Bind();
+		s_Data.textureShader->SetMat4("u_ViewProjection", viewProj);
+
+		s_Data.quadIndexCount = 0;
+		s_Data.quadVertexBufferPointer = s_Data.quadVertexBufferBase;
+
+		s_Data.textureSlotIndex = 1;
+	}
+
 	void Renderer2D::EndScene()
 	{
 		UME_PROFILE_FUNC();

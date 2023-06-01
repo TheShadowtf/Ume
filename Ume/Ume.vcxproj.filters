@@ -37,6 +37,9 @@
     <Filter Include="src\Ume\Renderer">
       <UniqueIdentifier>{891EC183-7517-E0D5-9E49-C55A8AA1BFE1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Ume\Scene">
+      <UniqueIdentifier>{E07AA249-4C3B-1E80-1576-67FD81F5625C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -150,6 +153,9 @@
     <ClInclude Include="src\Ume\Renderer\Buffer.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Ume\Renderer\Camera.h">
+      <Filter>src\Ume\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Ume\Renderer\Framebuffer.h">
       <Filter>src\Ume\Renderer</Filter>
     </ClInclude>
@@ -185,6 +191,21 @@
     </ClInclude>
     <ClInclude Include="src\Ume\Renderer\VertexArray.h">
       <Filter>src\Ume\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Scene\Components.h">
+      <Filter>src\Ume\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Scene\Entity.h">
+      <Filter>src\Ume\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Scene\Scene.h">
+      <Filter>src\Ume\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Scene\SceneCamera.h">
+      <Filter>src\Ume\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ume\Scene\ScriptableEntity.h">
+      <Filter>src\Ume\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\umepch.h">
       <Filter>src</Filter>
@@ -1440,9 +1461,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Ume\Scene\Scene.h" />
-    <ClInclude Include="src\Ume\Scene\Components.h" />
-    <ClInclude Include="src\Ume\Scene\Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1529,12 +1547,20 @@
     <ClCompile Include="src\Ume\Renderer\VertexArray.cpp">
       <Filter>src\Ume\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Ume\Scene\Entity.cpp">
+      <Filter>src\Ume\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Scene\Scene.cpp">
+      <Filter>src\Ume\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ume\Scene\SceneCamera.cpp">
+      <Filter>src\Ume\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\umepch.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Ume\Scene\Scene.cpp" />
   </ItemGroup>
 </Project>

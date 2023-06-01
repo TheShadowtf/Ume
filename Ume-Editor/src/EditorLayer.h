@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Ume.h>
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Ume
 {
@@ -23,12 +24,17 @@ namespace Ume
 		Ref<Framebuffer>  m_FrameBuffer;
 
 		Ref<Scene> m_ActiveScene;
-		entt::entity m_SqareEntity;
+		Entity m_SquareEntity, m_RedSquareEntity;
+		Entity m_CameraEntity;
+		Entity m_SecondCamEntity;
+
+		bool m_PrimaryCamera = true;
 
 		bool m_ViewportFocused = false, m_ViewportHovered = false;
 
-		glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+		glm::vec2 m_ViewportSize		= { 0.0f, 0.0f };
+		glm::vec4 m_SquareColor			= { 1.0f, 1.0f, 1.0f, 1.0f };
 
-		glm::vec4 m_SquareColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 }

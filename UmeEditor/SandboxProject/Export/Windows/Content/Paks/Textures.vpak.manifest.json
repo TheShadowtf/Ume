@@ -1,0 +1,33 @@
+{
+  "format": "UmeVPackManifest",
+  "version": 1,
+  "project": "Sandbox",
+  "assetClass": "Textures",
+  "entryCount": 3,
+  "entries": [
+    {
+      "path": "Textures/Checkerboard.png",
+      "width": 64,
+      "height": 64,
+      "channels": 4,
+      "compiledBytes": 16384,
+      "hash64": "0xa5bea2f0def20325"
+    },
+    {
+      "path": "Textures/Grass.png",
+      "width": 176,
+      "height": 112,
+      "channels": 4,
+      "compiledBytes": 78848,
+      "hash64": "0x5772cf7db4e8a74b"
+    },
+    {
+      "path": "Textures/UmeLogo.png",
+      "width": 2160,
+      "height": 2160,
+      "channels": 4,
+      "compiledBytes": 18662400,
+      "hash64": "0xe95e7e692659d398"
+    }
+  ]
+}

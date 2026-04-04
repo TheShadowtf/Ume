@@ -1,0 +1,16 @@
+Project:
+  Name: Sandbox
+  ProjectType: 2D
+  StartScene: "Scenes/MainScene.ume"
+  AssetDirectory: "Assets"
+  ScriptModulePath: "Scripts/Binaries/Sandbox.dll"
+  # RuntimeAssetDirectory: specifies where runtime assets are located (relative to project file)
+  # If left empty, uses AssetDirectory (default for development)
+  # Set this when distributing the game engine so projects are portable
+  RuntimeAssetDirectory: "Assets"
+
+  # RuntimeVPackDirectory: where compiled .vpak files are copied for editor/launcher/runtime use
+  RuntimeVPackDirectory: "Build/Paks"
+
+  # ExportVPackDirectory: where compiled .vpak files are copied for exported games
+  ExportVPackDirectory: "Export/Windows/Content/Paks"

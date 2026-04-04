@@ -1,7 +1,17 @@
-# Directories
-.vs/
-bin/
+**/bin/
 bin-int/
+Intermediates/
+build-cmake/
 
-# Files
-*.user
+*.log
+
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+**.csproj
+
+Ume/vendor/VulkanSDK
+UmeEditor/assets/cache
+scripts/__pycache__

@@ -1,72 +1,228 @@
 #pragma once
 
+#include "SceneCamera.h"
+#include "Ume/Core/UUID.h"
+#include "Ume/Renderer/Texture.h"
+#include "Ume/Renderer/Font.h"
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "SceneCamera.h"
-#include "ScriptableEntity.h"
-#include "Ume/Core/Timestep.h"
+#include <vector>
 
-namespace Ume
-{
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
+
+namespace Ume {
+
+	struct IDComponent
+	{
+		UUID ID;
+
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+	};
+
 	struct TagComponent
 	{
-		std::string tag;
+		std::string Tag;
 
 		TagComponent() = default;
 		TagComponent(const TagComponent&) = default;
-		TagComponent(const std::string& tag) : tag(tag) {}
+		TagComponent(const std::string& tag)
+			: Tag(tag) {}
 	};
 
 	struct TransformComponent
 	{
 		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Rotation    = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Scale       = { 1.0f, 1.0f, 1.0f };
-		
+		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
+
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
-		TransformComponent(const glm::vec3& translation) : Translation(translation) {}
+		TransformComponent(const glm::vec3& translation)
+			: Translation(translation) {}
 
 		glm::mat4 GetTransform() const
 		{
-			glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), Rotation.x, { 1, 0, 0 }) * glm::rotate(glm::mat4(1.0f), Rotation.y, { 0, 1, 0 }) * glm::rotate(glm::mat4(1.0f), Rotation.z, { 0, 0, 1 });
+			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
 
-			return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
-		};
+			return glm::translate(glm::mat4(1.0f), Translation)
+				* rotation
+				* glm::scale(glm::mat4(1.0f), Scale);
+		}
 	};
 
 	struct SpriteRendererComponent
 	{
+		enum class BlendMode
+		{
+			Alpha = 0,
+			Additive = 1,
+			Multiply = 2
+		};
+
 		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		Ref<Texture2D> Texture;
+		float TilingFactor = 1.0f;
+		BlendMode RenderBlendMode = BlendMode::Alpha;
+		int SortingLayer = 0;
+		bool DepthTest = true;
+		bool DepthWrite = true;
+		bool Cull = false;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
-		SpriteRendererComponent(const glm::vec4 color) : Color(color) {}
+		SpriteRendererComponent(const glm::vec4& color)
+			: Color(color) {}
+	};
+
+	struct CircleRendererComponent
+	{
+		glm::vec4 Color{ 1.0f, 1.0f, 1.0f, 1.0f };
+		float Thickness = 1.0f;
+		float Fade = 0.005f;
+
+		CircleRendererComponent() = default;
+		CircleRendererComponent(const CircleRendererComponent&) = default;
 	};
 
 	struct CameraComponent
 	{
-		SceneCamera camera;
-		bool primary = true;
-		bool fixedAspectRatio = false;
+		SceneCamera Camera;
+		bool Primary = true; // TODO: think about moving to Scene
+		bool FixedAspectRatio = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
 	};
 
+	struct ScriptComponent
+	{
+		std::string ClassName;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+	};
+
+	// Forward declaration
+	class ScriptableEntity;
+
 	struct NativeScriptComponent
 	{
-		ScriptableEntity* instance = nullptr;
+		ScriptableEntity* Instance = nullptr;
 
-		ScriptableEntity*(*InstantiateFunc)();
-		void(*DestroyInstFunc)(NativeScriptComponent*);
+		ScriptableEntity*(*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
 
 		template<typename T>
 		void Bind()
 		{
-			InstantiateFunc = []() { return static_cast<ScriptableEntity*>(new T()); };
-			DestroyInstFunc = [](NativeScriptComponent* nst) { delete nst->instance; nst->instance = nullptr; };
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
+
+	// Physics
+
+	struct Rigidbody2D
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType Type = BodyType::Static;
+		bool FixedRotation = false;
+		bool IsGround = false;
+
+		// Storage for runtime
+		void* RuntimeBody = nullptr;
+
+		Rigidbody2D() = default;
+		Rigidbody2D(const Rigidbody2D&) = default;
+	};
+
+	struct BoxCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		// TODO(Yan): move into physics material in the future maybe
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		// Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+	};
+
+	struct CircleCollider2DComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		float Radius = 0.5f;
+
+		// TODO(Yan): move into physics material in the future maybe
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		// Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+	};
+
+	struct ContactListenerComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		// TODO(Yan): move into physics material in the future maybe
+		float Density = 1.0f;
+		float RestitutionThreshold = 0.5f;
+		float HasContact = 1.0f;
+
+		// Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		ContactListenerComponent() = default;
+		ContactListenerComponent(const ContactListenerComponent&) = default;
+	};
+
+	struct RelationshipComponent
+	{
+		UUID Parent = UUID(0);
+		std::vector<UUID> Children;
+
+		RelationshipComponent() = default;
+		RelationshipComponent(const RelationshipComponent&) = default;
+	};
+
+	// Text
+
+	struct TextComponent
+	{
+		std::string TextString;
+		Ref<Font> FontAsset = Font::GetDefault();
+		glm::vec4 Color{ 1.0f };
+		float Kerning = 0.0f;
+		float LineSpacing = 0.0f;
+	};
+
+	template<typename... Component>
+	struct ComponentGroup
+	{
+	};
+
+	using AllComponents = 
+		ComponentGroup<TransformComponent, SpriteRendererComponent,
+			CircleRendererComponent, CameraComponent, ScriptComponent,
+			NativeScriptComponent, Rigidbody2D, BoxCollider2DComponent,
+			CircleCollider2DComponent, ContactListenerComponent, RelationshipComponent,
+			TextComponent>;
+
 }

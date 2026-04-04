@@ -1,14 +1,15 @@
 #pragma once
 
-#include <umepch.h>
 #include "Ume/Renderer/Buffer.h"
 
-namespace Ume
-{
+#include <memory>
+
+namespace Ume {
+
 	class VertexArray
 	{
 	public:
-		virtual ~VertexArray() {}
+		virtual ~VertexArray() = default;
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
@@ -21,4 +22,5 @@ namespace Ume
 
 		static Ref<VertexArray> Create();
 	};
+
 }

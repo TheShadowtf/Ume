@@ -1,11 +1,12 @@
 #pragma once
 
-namespace Ume
-{
+namespace Ume {
+
 	class Timestep
 	{
 	public:
-		Timestep(float time = 0.0f) : m_Time(time)
+		Timestep(float time = 0.0f)
+			: m_Time(time)
 		{
 		}
 
@@ -16,4 +17,5 @@ namespace Ume
 	private:
 		float m_Time;
 	};
+
 }

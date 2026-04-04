@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Event.h"
+#include "Ume/Events/Event.h"
 #include "Ume/Core/KeyCodes.h"
 
 namespace Ume {
 
-	class UME_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		KeyCode GetKeyCode() const { return m_KeyCode; }
@@ -18,7 +18,7 @@ namespace Ume {
 		KeyCode m_KeyCode;
 	};
 
-	class UME_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(const KeyCode keycode, bool isRepeat = false)
@@ -38,7 +38,23 @@ namespace Ume {
 		bool m_IsRepeat;
 	};
 
-	class UME_API KeyTypedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
+	{
+	public:
+		KeyReleasedEvent(const KeyCode keycode)
+			: KeyEvent(keycode) {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "KeyReleasedEvent: " << m_KeyCode;
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyReleased)
+	};
+
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(const KeyCode keycode)
@@ -52,21 +68,5 @@ namespace Ume {
 		}
 
 		EVENT_CLASS_TYPE(KeyTyped)
-	};
-
-	class UME_API KeyReleasedEvent : public KeyEvent
-	{
-	public:
-		KeyReleasedEvent(int keycode)
-			: KeyEvent(keycode) {}
-
-		std::string ToString() const override
-		{
-			std::stringstream ss;
-			ss << "KeyReleasedEvent: " << m_KeyCode;
-			return ss.str();
-		}
-
-		EVENT_CLASS_TYPE(KeyReleased)
 	};
 }

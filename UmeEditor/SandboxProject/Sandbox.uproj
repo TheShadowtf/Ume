@@ -1,0 +1,9 @@
+Project:
+  Name: Sandbox
+  ProjectType: 2D
+  StartScene: Scenes\Physics2D.ume
+  AssetDirectory: Assets
+  ScriptModulePath: Scripts/Binaries/Sandbox.dll
+  RuntimeAssetDirectory: Assets
+  RuntimeVPackDirectory: Build/Paks
+  ExportVPackDirectory: Export/Windows/Content/Paks

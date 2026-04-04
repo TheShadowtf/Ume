@@ -1,0 +1,7 @@
+Project:
+  Name: Test
+  ProjectType: 2D
+  StartScene: ""
+  AssetDirectory: Assets
+  RuntimeAssetDirectory: Assets
+  ScriptModulePath: Scripts/Binaries/Sandbox.dll

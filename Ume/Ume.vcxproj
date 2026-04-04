@@ -76,20 +76,21 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>umepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;IMGUI_IMPL_OPENGL_LOADER_CUSTOM;_CRT_SECURE_NO_WARNINGS;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;UME_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\Box2D\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;vendor\msdf-atlas-gen\msdfgen;vendor\msdf-atlas-gen\msdf-atlas-gen;vendor\stb_image;vendor\entt\include;vendor\mono\include;vendor\yaml-cpp\include;vendor\ImGuizmo;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;vendor\mono\lib\Debug\libmono-static-sgen.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,16 +98,16 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>umepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;IMGUI_IMPL_OPENGL_LOADER_CUSTOM;_CRT_SECURE_NO_WARNINGS;UME_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;UME_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\Box2D\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;vendor\msdf-atlas-gen\msdfgen;vendor\msdf-atlas-gen\msdf-atlas-gen;vendor\stb_image;vendor\entt\include;vendor\mono\include;vendor\yaml-cpp\include;vendor\ImGuizmo;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -114,7 +115,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;vendor\mono\lib\Release\libmono-static-sgen.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -122,16 +123,16 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>umepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>UME_PLATFORM_WINDOWS;UME_BUILD_DLL;GLFW_INCLUDE_NONE;IMGUI_IMPL_OPENGL_LOADER_CUSTOM;_CRT_SECURE_NO_WARNINGS;UME_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\GLFW\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;GLFW_INCLUDE_NONE;UME_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\Box2D\include;vendor\filewatch;vendor\GLFW\include;vendor\Glad\include;vendor\ImGui;vendor\glm;vendor\msdf-atlas-gen\msdfgen;vendor\msdf-atlas-gen\msdf-atlas-gen;vendor\stb_image;vendor\entt\include;vendor\mono\include;vendor\yaml-cpp\include;vendor\ImGuizmo;Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,7 +140,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;vendor\mono\lib\Dist\libmono-static-sgen.lib;Ws2_32.lib;Winmm.lib;Version.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -149,48 +150,67 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Ume.h" />
     <ClInclude Include="src\Ume\Core\Application.h" />
-    <ClInclude Include="src\Ume\Core\Core.h" />
-    <ClInclude Include="src\Ume\Core\CoreSettings.h" />
-    <ClInclude Include="src\Ume\Core\Debug\Instrumentor.h" />
-    <ClInclude Include="src\Ume\Core\Debug\Log.h" />
+    <ClInclude Include="src\Ume\Core\Assert.h" />
+    <ClInclude Include="src\Ume\Core\Base.h" />
+    <ClInclude Include="src\Ume\Core\Buffer.h" />
     <ClInclude Include="src\Ume\Core\EntryPoint.h" />
+    <ClInclude Include="src\Ume\Core\FileSystem.h" />
     <ClInclude Include="src\Ume\Core\Input.h" />
     <ClInclude Include="src\Ume\Core\KeyCodes.h" />
-    <ClInclude Include="src\Ume\Core\Layers\Layer.h" />
-    <ClInclude Include="src\Ume\Core\Layers\LayerStack.h" />
+    <ClInclude Include="src\Ume\Core\Layer.h" />
+    <ClInclude Include="src\Ume\Core\LayerStack.h" />
+    <ClInclude Include="src\Ume\Core\Log.h" />
     <ClInclude Include="src\Ume\Core\MouseCodes.h" />
+    <ClInclude Include="src\Ume\Core\PlatformDetection.h" />
+    <ClInclude Include="src\Ume\Core\Timer.h" />
     <ClInclude Include="src\Ume\Core\Timestep.h" />
+    <ClInclude Include="src\Ume\Core\UUID.h" />
     <ClInclude Include="src\Ume\Core\Window.h" />
+    <ClInclude Include="src\Ume\Debug\Instrumentor.h" />
     <ClInclude Include="src\Ume\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Ume\Events\Event.h" />
     <ClInclude Include="src\Ume\Events\KeyEvent.h" />
     <ClInclude Include="src\Ume\Events\MouseEvent.h" />
     <ClInclude Include="src\Ume\ImGui\ImGuiLayer.h" />
-    <ClInclude Include="src\Ume\Math\Random.h" />
+    <ClInclude Include="src\Ume\Math\Math.h" />
+    <ClInclude Include="src\Ume\Physics\Collision2D.h" />
+    <ClInclude Include="src\Ume\Physics\Physics2D.h" />
+    <ClInclude Include="src\Ume\Project\Project.h" />
+    <ClInclude Include="src\Ume\Project\ProjectSerializer.h" />
     <ClInclude Include="src\Ume\Renderer\Buffer.h" />
     <ClInclude Include="src\Ume\Renderer\Camera.h" />
+    <ClInclude Include="src\Ume\Renderer\EditorCamera.h" />
+    <ClInclude Include="src\Ume\Renderer\Font.h" />
     <ClInclude Include="src\Ume\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Ume\Renderer\GraphicsContext.h" />
-    <ClInclude Include="src\Ume\Renderer\OrthoCameraController.h" />
+    <ClInclude Include="src\Ume\Renderer\MSDFData.h" />
     <ClInclude Include="src\Ume\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="src\Ume\Renderer\OrthographicCameraController.h" />
+    <ClInclude Include="src\Ume\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Ume\Renderer\Renderer.h" />
     <ClInclude Include="src\Ume\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Ume\Renderer\RendererAPI.h" />
-    <ClInclude Include="src\Ume\Renderer\RendererCommand.h" />
     <ClInclude Include="src\Ume\Renderer\Shader.h" />
-    <ClInclude Include="src\Ume\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Ume\Renderer\Texture.h" />
+    <ClInclude Include="src\Ume\Renderer\UniformBuffer.h" />
     <ClInclude Include="src\Ume\Renderer\VertexArray.h" />
     <ClInclude Include="src\Ume\Scene\Components.h" />
     <ClInclude Include="src\Ume\Scene\Entity.h" />
     <ClInclude Include="src\Ume\Scene\Scene.h" />
     <ClInclude Include="src\Ume\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Ume\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Ume\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Ume\Scripting\ScriptEngine.h" />
+    <ClInclude Include="src\Ume\Scripting\ScriptGlue.h" />
+    <ClInclude Include="src\Ume\UI\UI.h" />
+    <ClInclude Include="src\Ume\Utils\PlatformUtils.h" />
     <ClInclude Include="src\umepch.h" />
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -254,11 +274,8 @@
     <ClInclude Include="vendor\glm\glm\detail\type_vec4_simd.inl" />
     <ClInclude Include="vendor\glm\glm\exponential.hpp" />
     <ClInclude Include="vendor\glm\glm\ext.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\_matrix_vectorize.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_clip_space.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_clip_space.inl" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_common.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_common.inl" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_double2x2.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_double2x2_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_double2x3.hpp" />
@@ -295,50 +312,12 @@
     <ClInclude Include="vendor\glm\glm\ext\matrix_float4x3_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_float4x4.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_float4x4_precision.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int2x2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int2x2_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int2x3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int2x3_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int2x4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int2x4_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int3x2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int3x2_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int3x3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int3x3_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int3x4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int3x4_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int4x2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int4x2_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int4x3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int4x3_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int4x4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_int4x4_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_integer.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_integer.inl" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_projection.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_projection.inl" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_relational.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_relational.inl" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_transform.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\matrix_transform.inl" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint2x2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint2x2_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint2x3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint2x3_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint2x4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint2x4_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint3x2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint3x2_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint3x3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint3x3_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint3x4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint3x4_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint4x2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint4x2_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint4x3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint4x3_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint4x4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\matrix_uint4x4_sized.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\quaternion_common.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\quaternion_common.inl" />
     <ClInclude Include="vendor\glm\glm\ext\quaternion_common_simd.inl" />
@@ -361,12 +340,6 @@
     <ClInclude Include="vendor\glm\glm\ext\scalar_constants.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\scalar_constants.inl" />
     <ClInclude Include="vendor\glm\glm\ext\scalar_int_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\scalar_integer.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\scalar_integer.inl" />
-    <ClInclude Include="vendor\glm\glm\ext\scalar_packing.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\scalar_packing.inl" />
-    <ClInclude Include="vendor\glm\glm\ext\scalar_reciprocal.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\scalar_reciprocal.inl" />
     <ClInclude Include="vendor\glm\glm\ext\scalar_relational.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\scalar_relational.inl" />
     <ClInclude Include="vendor\glm\glm\ext\scalar_uint_sized.hpp" />
@@ -399,29 +372,23 @@
     <ClInclude Include="vendor\glm\glm\ext\vector_float4.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_float4_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_int1.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_int1_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_int1_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_int2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_int2_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_int2_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_int3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_int3_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_int3_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_int4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_int4_sized.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_integer.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_integer.inl" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_packing.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_packing.inl" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_reciprocal.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_reciprocal.inl" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_int4_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_relational.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_relational.inl" />
     <ClInclude Include="vendor\glm\glm\ext\vector_uint1.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_uint1_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint1_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_uint2.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_uint2_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint2_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_uint3.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_uint3_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint3_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_uint4.hpp" />
-    <ClInclude Include="vendor\glm\glm\ext\vector_uint4_sized.hpp" />
+    <ClInclude Include="vendor\glm\glm\ext\vector_uint4_precision.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_ulp.hpp" />
     <ClInclude Include="vendor\glm\glm\ext\vector_ulp.inl" />
     <ClInclude Include="vendor\glm\glm\fwd.hpp" />
@@ -454,6 +421,7 @@
     <ClInclude Include="vendor\glm\glm\gtc\random.hpp" />
     <ClInclude Include="vendor\glm\glm\gtc\random.inl" />
     <ClInclude Include="vendor\glm\glm\gtc\reciprocal.hpp" />
+    <ClInclude Include="vendor\glm\glm\gtc\reciprocal.inl" />
     <ClInclude Include="vendor\glm\glm\gtc\round.hpp" />
     <ClInclude Include="vendor\glm\glm\gtc\round.inl" />
     <ClInclude Include="vendor\glm\glm\gtc\type_aligned.hpp" />
@@ -547,8 +515,6 @@
     <ClInclude Include="vendor\glm\glm\gtx\optimum_pow.inl" />
     <ClInclude Include="vendor\glm\glm\gtx\orthonormalize.hpp" />
     <ClInclude Include="vendor\glm\glm\gtx\orthonormalize.inl" />
-    <ClInclude Include="vendor\glm\glm\gtx\pca.hpp" />
-    <ClInclude Include="vendor\glm\glm\gtx\pca.inl" />
     <ClInclude Include="vendor\glm\glm\gtx\perpendicular.hpp" />
     <ClInclude Include="vendor\glm\glm\gtx\perpendicular.inl" />
     <ClInclude Include="vendor\glm\glm\gtx\polar_coordinates.hpp" />
@@ -616,45 +582,70 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Ume\Core\Application.cpp" />
-    <ClCompile Include="src\Ume\Core\Debug\Log.cpp" />
-    <ClCompile Include="src\Ume\Core\Layers\Layer.cpp" />
-    <ClCompile Include="src\Ume\Core\Layers\LayerStack.cpp" />
+    <ClCompile Include="src\Ume\Core\FileSystem.cpp" />
+    <ClCompile Include="src\Ume\Core\Layer.cpp" />
+    <ClCompile Include="src\Ume\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Ume\Core\Log.cpp" />
+    <ClCompile Include="src\Ume\Core\UUID.cpp" />
+    <ClCompile Include="src\Ume\Core\Window.cpp" />
     <ClCompile Include="src\Ume\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Ume\ImGui\ImGuiLayer.cpp" />
-    <ClCompile Include="src\Ume\Math\Random.cpp" />
+    <ClCompile Include="src\Ume\Math\Math.cpp" />
+    <ClCompile Include="src\Ume\Project\Project.cpp" />
+    <ClCompile Include="src\Ume\Project\ProjectSerializer.cpp" />
     <ClCompile Include="src\Ume\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Ume\Renderer\EditorCamera.cpp" />
+    <ClCompile Include="src\Ume\Renderer\Font.cpp" />
     <ClCompile Include="src\Ume\Renderer\Framebuffer.cpp" />
-    <ClCompile Include="src\Ume\Renderer\OrthoCameraController.cpp" />
+    <ClCompile Include="src\Ume\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Ume\Renderer\OrthographicCamera.cpp" />
+    <ClCompile Include="src\Ume\Renderer\OrthographicCameraController.cpp" />
+    <ClCompile Include="src\Ume\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Ume\Renderer\Renderer.cpp" />
     <ClCompile Include="src\Ume\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Ume\Renderer\RendererAPI.cpp" />
-    <ClCompile Include="src\Ume\Renderer\RendererCommand.cpp" />
     <ClCompile Include="src\Ume\Renderer\Shader.cpp" />
-    <ClCompile Include="src\Ume\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Ume\Renderer\Texture.cpp" />
+    <ClCompile Include="src\Ume\Renderer\UniformBuffer.cpp" />
     <ClCompile Include="src\Ume\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Ume\Scene\Entity.cpp" />
     <ClCompile Include="src\Ume\Scene\Scene.cpp" />
     <ClCompile Include="src\Ume\Scene\SceneCamera.cpp" />
+    <ClCompile Include="src\Ume\Scene\SceneSerializer.cpp" />
+    <ClCompile Include="src\Ume\Scripting\ScriptEngine.cpp" />
+    <ClCompile Include="src\Ume\Scripting\ScriptGlue.cpp" />
     <ClCompile Include="src\umepch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="vendor\Box2D\Box2D.vcxproj">
+      <Project>{A434E80C-1049-10BE-D9CA-B31D459E0CEF}</Project>
+    </ProjectReference>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">
       <Project>{154B857C-0182-860D-AA6E-6C109684020F}</Project>
     </ProjectReference>
-    <ProjectReference Include="vendor\glad\Glad.vcxproj">
+    <ProjectReference Include="vendor\Glad\Glad.vcxproj">
       <Project>{BDD6857C-A90D-870D-52FA-6C103E10030F}</Project>
     </ProjectReference>
     <ProjectReference Include="vendor\imgui\ImGui.vcxproj">
       <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\msdf-atlas-gen\msdf-atlas-gen.vcxproj">
+      <Project>{38BD587B-248B-4C81-0D1F-BDA7F98B28E6}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\yaml-cpp\yaml-cpp.vcxproj">
+      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

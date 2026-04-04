@@ -1,55 +1,401 @@
-#include <umepch.h>
-#include <glm/glm.hpp>
-
-#include "Components.h"
-#include "Ume/Renderer/Renderer2D.h"
-
+#include "umepch.h"
 #include "Scene.h"
 #include "Entity.h"
 
-namespace Ume
-{
+#include "Components.h"
+#include "ScriptableEntity.h"
+#include "Ume/Scripting/ScriptEngine.h"
+#include "Ume/Renderer/Renderer2D.h"
+#include "Ume/Renderer/RenderCommand.h"
+#include "Ume/Physics/Physics2D.h"
+#include "Ume/Math/Math.h"
+
+#include <glm/glm.hpp>
+
+#include "Entity.h"
+
+// Box2D
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
+
+#include <algorithm>
+
+namespace Ume {
+
+	namespace
+	{
+		constexpr float kPhysicsFixedDt = 1.0f / 120.0f;
+
+		RendererAPI::BlendMode ToRendererBlendMode(SpriteRendererComponent::BlendMode mode)
+		{
+			switch (mode)
+			{
+				case SpriteRendererComponent::BlendMode::Alpha: return RendererAPI::BlendMode::Alpha;
+				case SpriteRendererComponent::BlendMode::Additive: return RendererAPI::BlendMode::Additive;
+				case SpriteRendererComponent::BlendMode::Multiply: return RendererAPI::BlendMode::Multiply;
+			}
+
+			return RendererAPI::BlendMode::Alpha;
+		}
+
+		struct SpriteDrawItem
+		{
+			entt::entity EntityID = entt::null;
+			int SortingLayer = 0;
+			float WorldZ = 0.0f;
+		};
+		void StepPhysicsFixed(b2World* world, float frameDtSeconds, float& accumulator)
+		{
+			if (!world)
+				return;
+
+			// Clamp long frames so we don't spiral into too many substeps.
+			if (frameDtSeconds < 0.0f)
+				frameDtSeconds = 0.0f;
+			if (frameDtSeconds > 0.10f)
+				frameDtSeconds = 0.10f;
+
+			constexpr int32_t velocityIterations = 6;
+			constexpr int32_t positionIterations = 2;
+			constexpr int maxSubSteps = 8;
+
+			accumulator += frameDtSeconds;
+
+			int steps = 0;
+			while (accumulator >= kPhysicsFixedDt && steps < maxSubSteps)
+			{
+				world->Step(kPhysicsFixedDt, velocityIterations, positionIterations);
+				accumulator -= kPhysicsFixedDt;
+				steps++;
+			}
+
+			if (steps == maxSubSteps)
+				accumulator = 0.0f;
+		}
+	}
+
 	Scene::Scene()
 	{
-		//m_Registry.on_construct<CameraComponent>().connect<&Function>();
 	}
 
 	Scene::~Scene()
 	{
+		delete m_PhysicsWorld;
+	}
 
+	template<typename... Component>
+	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		([&]()
+		{
+			auto view = src.view<Component>();
+			for (auto srcEntity : view)
+			{
+				entt::entity dstEntity = enttMap.at(src.get<IDComponent>(srcEntity).ID);
+
+				auto& srcComponent = src.get<Component>(srcEntity);
+				dst.emplace_or_replace<Component>(dstEntity, srcComponent);
+			}
+		}(), ...);
+	}
+
+	template<typename... Component>
+	static void CopyComponent(ComponentGroup<Component...>, entt::registry& dst, entt::registry& src, const std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		CopyComponent<Component...>(dst, src, enttMap);
+	}
+
+	template<typename... Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		([&]()
+		{
+			if (src.HasComponent<Component>())
+				dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+		}(), ...);
+	}
+
+	template<typename... Component>
+	static void CopyComponentIfExists(ComponentGroup<Component...>, Entity dst, Entity src)
+	{
+		CopyComponentIfExists<Component...>(dst, src);
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> other)
+	{
+		Ref<Scene> newScene = CreateRef<Scene>();
+
+		newScene->m_ViewportWidth = other->m_ViewportWidth;
+		newScene->m_ViewportHeight = other->m_ViewportHeight;
+
+		auto& srcSceneRegistry = other->m_Registry;
+		auto& dstSceneRegistry = newScene->m_Registry;
+		std::unordered_map<UUID, entt::entity> enttMap;
+
+		// Create entities in new scene
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		for (auto e : idView)
+		{
+			UUID uuid = srcSceneRegistry.get<IDComponent>(e).ID;
+			const auto& name = srcSceneRegistry.get<TagComponent>(e).Tag;
+			Entity newEntity = newScene->CreateEntityWithUUID(uuid, name);
+			enttMap[uuid] = (entt::entity)newEntity;
+		}
+
+		// Copy components (except IDComponent and TagComponent)
+		CopyComponent(AllComponents{}, dstSceneRegistry, srcSceneRegistry, enttMap);
+
+		return newScene;
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
+		return CreateEntityWithUUID(UUID(), name);
+	}
+
+	Entity Scene::CreateEntityWithUUID(UUID uuid, const std::string& name)
+	{
 		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
-		tag.tag = name.empty() ? "Unnamed Entity" : name;
+		tag.Tag = name.empty() ? "Entity" : name;
+		entity.AddComponent<RelationshipComponent>();
+
+		m_EntityMap[uuid] = entity;
 
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
+		if (!entity)
+			return;
+
+		if (entity.HasComponent<RelationshipComponent>())
+		{
+			auto relationship = entity.GetComponent<RelationshipComponent>();
+
+			if ((uint64_t)relationship.Parent != 0)
+			{
+				Entity parentEntity = GetEntityByUUID(relationship.Parent);
+				if (parentEntity && parentEntity.HasComponent<RelationshipComponent>())
+				{
+					auto& parentRelationship = parentEntity.GetComponent<RelationshipComponent>();
+					auto childIt = std::find(parentRelationship.Children.begin(), parentRelationship.Children.end(), entity.GetUUID());
+					if (childIt != parentRelationship.Children.end())
+						parentRelationship.Children.erase(childIt);
+				}
+			}
+
+			const auto children = relationship.Children;
+			for (UUID childID : children)
+			{
+				Entity childEntity = GetEntityByUUID(childID);
+				if (childEntity)
+					DestroyEntity(childEntity);
+			}
+		}
+
+		m_EntityMap.erase(entity.GetUUID());
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnRuntimeStart()
 	{
+		m_IsRunning = true;
+		m_PhysicsAccumulator = 0.0f;
+
+		OnPhysics2DStart();
+
+		// Scripting
 		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+			ScriptEngine::OnRuntimeStart(this);
+			// Instantiate all script entities
+
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnCreateEntity(entity);
+			}
+		}
+	}
+
+	void Scene::OnRuntimeStop()
+	{
+		m_IsRunning = false;
+		m_PhysicsAccumulator = 0.0f;
+
+		OnPhysics2DStop();
+
+		ScriptEngine::OnRuntimeStop();
+	}
+
+	void Scene::OnSimulationStart()
+	{
+		m_PhysicsAccumulator = 0.0f;
+		OnPhysics2DStart();
+	}
+
+	void Scene::OnSimulationStop()
+	{
+		m_PhysicsAccumulator = 0.0f;
+		OnPhysics2DStop();
+	}
+
+	void Scene::OnUpdateRuntime(Timestep ts)
+	{
+		if (!m_IsPaused || m_StepFrames-- > 0)
+		{
+			// Update scripts
+			{
+				// C# Entity OnUpdate
+				auto view = m_Registry.view<ScriptComponent>();
+				for (auto e : view)
 				{
-					if (!nsc.instance)
+					Entity entity = { e, this };
+					ScriptEngine::OnUpdateEntity(entity, ts);
+				}
+
+				m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
 					{
-						nsc.instance = nsc.InstantiateFunc();
-						nsc.instance->m_Entity = Entity{ entity, this };
-						nsc.instance->OnCreate();
+						// TODO: Move to Scene::OnScenePlay
+						if (!nsc.Instance)
+						{
+							nsc.Instance = nsc.InstantiateScript();
+							nsc.Instance->m_Entity = Entity{ entity, this };
+							nsc.Instance->OnCreate();
+						}
+
+						nsc.Instance->OnUpdate(ts);
+					});
+			}
+
+			// Physics
+			{
+				StepPhysicsFixed(m_PhysicsWorld, (float)ts, m_PhysicsAccumulator);
+				const float renderLeadSeconds = std::clamp(m_PhysicsAccumulator, 0.0f, kPhysicsFixedDt);
+
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<Rigidbody2D>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<Rigidbody2D>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					if (!body)
+						continue;
+
+					const b2Vec2 predictedPosition = body->GetPosition() + renderLeadSeconds * body->GetLinearVelocity();
+					const float predictedAngle = body->GetAngle() + body->GetAngularVelocity() * renderLeadSeconds;
+
+					if (entity.HasComponent<RelationshipComponent>())
+					{
+						auto& relationship = entity.GetComponent<RelationshipComponent>();
+						if ((uint64_t)relationship.Parent != 0)
+						{
+							Entity parentEntity = GetEntityByUUID(relationship.Parent);
+							if (parentEntity)
+							{
+								glm::mat4 parentWorldTransform = GetWorldTransform(parentEntity);
+								glm::vec4 localPosition = glm::inverse(parentWorldTransform) * glm::vec4(predictedPosition.x, predictedPosition.y, transform.Translation.z, 1.0f);
+								transform.Translation.x = localPosition.x;
+								transform.Translation.y = localPosition.y;
+
+								glm::vec3 parentTranslation, parentRotation, parentScale;
+								if (Math::DecomposeTransform(parentWorldTransform, parentTranslation, parentRotation, parentScale))
+									transform.Rotation.z = predictedAngle - parentRotation.z;
+								else
+									transform.Rotation.z = predictedAngle;
+
+								continue;
+							}
+						}
 					}
 
-					nsc.instance->OnUpdate(ts);
-				});
+					transform.Translation.x = predictedPosition.x;
+					transform.Translation.y = predictedPosition.y;
+					transform.Rotation.z = predictedAngle;
+				}
+			}
 		}
 
+		RenderPrimaryCamera();
+	}
+
+	void Scene::OnUpdateSimulation(Timestep ts, EditorCamera& camera)
+	{
+		if (!m_IsPaused || m_StepFrames-- > 0)
+		{
+			// Physics
+			{
+				StepPhysicsFixed(m_PhysicsWorld, (float)ts, m_PhysicsAccumulator);
+				const float renderLeadSeconds = std::clamp(m_PhysicsAccumulator, 0.0f, kPhysicsFixedDt);
+
+				// Retrieve transform from Box2D
+				auto view = m_Registry.view<Rigidbody2D>();
+				for (auto e : view)
+				{
+					Entity entity = { e, this };
+					auto& transform = entity.GetComponent<TransformComponent>();
+					auto& rb2d = entity.GetComponent<Rigidbody2D>();
+
+					b2Body* body = (b2Body*)rb2d.RuntimeBody;
+					if (!body)
+						continue;
+
+					const b2Vec2 predictedPosition = body->GetPosition() + renderLeadSeconds * body->GetLinearVelocity();
+					const float predictedAngle = body->GetAngle() + body->GetAngularVelocity() * renderLeadSeconds;
+
+					if (entity.HasComponent<RelationshipComponent>())
+					{
+						auto& relationship = entity.GetComponent<RelationshipComponent>();
+						if ((uint64_t)relationship.Parent != 0)
+						{
+							Entity parentEntity = GetEntityByUUID(relationship.Parent);
+							if (parentEntity)
+							{
+								glm::mat4 parentWorldTransform = GetWorldTransform(parentEntity);
+								glm::vec4 localPosition = glm::inverse(parentWorldTransform) * glm::vec4(predictedPosition.x, predictedPosition.y, transform.Translation.z, 1.0f);
+								transform.Translation.x = localPosition.x;
+								transform.Translation.y = localPosition.y;
+
+								glm::vec3 parentTranslation, parentRotation, parentScale;
+								if (Math::DecomposeTransform(parentWorldTransform, parentTranslation, parentRotation, parentScale))
+									transform.Rotation.z = predictedAngle - parentRotation.z;
+								else
+									transform.Rotation.z = predictedAngle;
+
+								continue;
+							}
+						}
+					}
+
+					transform.Translation.x = predictedPosition.x;
+					transform.Translation.y = predictedPosition.y;
+					transform.Rotation.z = predictedAngle;
+				}
+			}
+		}
+
+		// Render
+		RenderScene(camera);
+	}
+
+	void Scene::OnUpdateEditor(Timestep ts, EditorCamera& camera)
+	{
+		// Render
+		RenderScene(camera);
+	}
+
+	bool Scene::RenderPrimaryCamera()
+	{
 		Camera* mainCamera = nullptr;
 		glm::mat4 cameraTransform;
 		{
@@ -58,49 +404,395 @@ namespace Ume
 			{
 				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
 
-				if (camera.primary)
+				if (camera.Primary)
 				{
-					mainCamera = &camera.camera;
-					cameraTransform = transform.GetTransform();
+					mainCamera = &camera.Camera;
+					cameraTransform = GetWorldTransform(Entity { entity, this });
 					break;
 				}
-
 			}
 		}
 
-		if (mainCamera)
-		{
-			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
+		if (!mainCamera)
+			return false;
 
+		Renderer2D::BeginScene(*mainCamera, cameraTransform);
+
+		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			std::vector<SpriteDrawItem> drawItems;
+			drawItems.reserve((size_t)group.size());
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				glm::mat4 worldTransform = GetWorldTransform(Entity { entity, this });
+				drawItems.push_back({ entity, sprite.SortingLayer, worldTransform[3].z });
 			}
-			Renderer2D::EndScene();
+
+			std::stable_sort(drawItems.begin(), drawItems.end(), [](const SpriteDrawItem& a, const SpriteDrawItem& b)
+			{
+				if (a.SortingLayer != b.SortingLayer)
+					return a.SortingLayer < b.SortingLayer;
+				return a.WorldZ < b.WorldZ;
+			});
+
+			for (const auto& drawItem : drawItems)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(drawItem.EntityID);
+				RenderCommand::SetBlendMode(ToRendererBlendMode(sprite.RenderBlendMode));
+				RenderCommand::SetDepthTest(sprite.DepthTest);
+				RenderCommand::SetDepthWrite(sprite.DepthWrite);
+				RenderCommand::SetCull(sprite.Cull);
+
+				Renderer2D::DrawSprite(GetWorldTransform(Entity { drawItem.EntityID, this }), sprite, (int)drawItem.EntityID);
+			}
+
+			RenderCommand::SetBlendMode(RendererAPI::BlendMode::Alpha);
+			RenderCommand::SetDepthTest(true);
+			RenderCommand::SetDepthWrite(true);
+			RenderCommand::SetCull(false);
 		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+				Renderer2D::DrawCircle(GetWorldTransform(Entity { entity, this }), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+			}
+		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, TextComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+				Renderer2D::DrawString(text.TextString, GetWorldTransform(Entity { entity, this }), text, (int)entity);
+			}
+		}
+
+		Renderer2D::EndScene();
+		return true;
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
 	{
-		m_ViewportWidth  = width;
+		if (m_ViewportWidth == width && m_ViewportHeight == height)
+			return;
+
+		m_ViewportWidth = width;
 		m_ViewportHeight = height;
 
+		// Resize our non-FixedAspectRatio cameras
 		auto view = m_Registry.view<CameraComponent>();
 		for (auto entity : view)
 		{
-			auto& cameraComp = view.get<CameraComponent>(entity);
-			if (!cameraComp.fixedAspectRatio)
-				cameraComp.camera.SetViewportSize(width, height);
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.FixedAspectRatio)
+				cameraComponent.Camera.SetViewportSize(width, height);
 		}
 	}
 
-	template<typename T>
+	Entity Scene::GetPrimaryCameraEntity()
+	{
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			const auto& camera = view.get<CameraComponent>(entity);
+			if (camera.Primary)
+				return Entity{entity, this};
+		}
+		return {};
+	}
+
+	void Scene::Step(int frames)
+	{
+		m_StepFrames = frames;
+	}
+
+	Entity Scene::DuplicateEntity(Entity entity)
+	{
+		// Copy name because we're going to modify component data structure
+		std::string name = entity.GetName();
+		Entity newEntity = CreateEntity(name);
+		CopyComponentIfExists(AllComponents{}, newEntity, entity);
+		return newEntity;
+	}
+
+	Entity Scene::FindEntityByName(std::string_view name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const TagComponent& tc = view.get<TagComponent>(entity);
+			if (tc.Tag == name)
+				return Entity{ entity, this };
+		}
+		return {};
+	}
+
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		// TODO(Yan): Maybe should be assert
+		if (m_EntityMap.find(uuid) != m_EntityMap.end())
+			return { m_EntityMap.at(uuid), this };
+
+		return {};
+	}
+
+	bool Scene::IsEntityHandleValid(entt::entity entity) const
+	{
+		return entity != entt::null && m_Registry.valid(entity);
+	}
+
+	glm::mat4 Scene::GetWorldTransform(Entity entity)
+	{
+		if (!entity || !entity.HasComponent<TransformComponent>())
+			return glm::mat4(1.0f);
+
+		glm::mat4 localTransform = entity.GetComponent<TransformComponent>().GetTransform();
+		if (!entity.HasComponent<RelationshipComponent>())
+			return localTransform;
+
+		UUID parentID = entity.GetComponent<RelationshipComponent>().Parent;
+		if ((uint64_t)parentID == 0)
+			return localTransform;
+
+		Entity parent = GetEntityByUUID(parentID);
+		if (!parent)
+			return localTransform;
+
+		return GetWorldTransform(parent) * localTransform;
+	}
+
+	void Scene::UnparentEntity(Entity child)
+	{
+		if (!child || !child.HasComponent<RelationshipComponent>())
+			return;
+
+		auto& relationship = child.GetComponent<RelationshipComponent>();
+		if ((uint64_t)relationship.Parent == 0)
+			return;
+
+		Entity parentEntity = GetEntityByUUID(relationship.Parent);
+		if (parentEntity && parentEntity.HasComponent<RelationshipComponent>())
+		{
+			auto& parentRelationship = parentEntity.GetComponent<RelationshipComponent>();
+			auto it = std::find(parentRelationship.Children.begin(), parentRelationship.Children.end(), child.GetUUID());
+			if (it != parentRelationship.Children.end())
+				parentRelationship.Children.erase(it);
+		}
+
+		relationship.Parent = UUID(0);
+	}
+
+	bool Scene::IsDescendant(Entity candidate, Entity potentialAncestor)
+	{
+		if (!candidate || !potentialAncestor || !candidate.HasComponent<RelationshipComponent>())
+			return false;
+
+		UUID currentParent = candidate.GetComponent<RelationshipComponent>().Parent;
+		while ((uint64_t)currentParent != 0)
+		{
+			if (currentParent == potentialAncestor.GetUUID())
+				return true;
+
+			Entity parentEntity = GetEntityByUUID(currentParent);
+			if (!parentEntity || !parentEntity.HasComponent<RelationshipComponent>())
+				break;
+
+			currentParent = parentEntity.GetComponent<RelationshipComponent>().Parent;
+		}
+
+		return false;
+	}
+
+	void Scene::ReparentEntity(Entity child, Entity newParent)
+	{
+		if (!child || child == newParent || !child.HasComponent<RelationshipComponent>())
+			return;
+
+		if (newParent)
+		{
+			if (!newParent.HasComponent<RelationshipComponent>())
+				return;
+			if (IsDescendant(newParent, child))
+				return;
+		}
+
+		UnparentEntity(child);
+
+		if (!newParent)
+			return;
+
+		auto& childRelationship = child.GetComponent<RelationshipComponent>();
+		auto& parentRelationship = newParent.GetComponent<RelationshipComponent>();
+
+		childRelationship.Parent = newParent.GetUUID();
+		if (std::find(parentRelationship.Children.begin(), parentRelationship.Children.end(), child.GetUUID()) == parentRelationship.Children.end())
+			parentRelationship.Children.push_back(child.GetUUID());
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
+		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
+
+		auto view = m_Registry.view<Rigidbody2D>();
+		for (auto e : view)
+		{
+			Entity entity = { e, this };
+			auto& transform = entity.GetComponent<TransformComponent>();
+			auto& rb2d = entity.GetComponent<Rigidbody2D>();
+
+			glm::mat4 worldTransform = GetWorldTransform(entity);
+			glm::vec3 worldTranslation, worldRotation, worldScale;
+			if (!Math::DecomposeTransform(worldTransform, worldTranslation, worldRotation, worldScale))
+			{
+				worldTranslation = transform.Translation;
+				worldRotation = transform.Rotation;
+				worldScale = transform.Scale;
+			}
+
+			b2BodyDef bodyDef;
+			bodyDef.type = Utils::Rigidbody2DTypeToBox2DBody(rb2d.Type);
+			bodyDef.position.Set(worldTranslation.x, worldTranslation.y);
+			bodyDef.angle = worldRotation.z;
+
+			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+			body->GetUserData().pointer = (uintptr_t)(uint64_t)entity.GetUUID();
+			body->SetFixedRotation(rb2d.FixedRotation);
+			rb2d.RuntimeBody = body;
+
+			if (entity.HasComponent<BoxCollider2DComponent>())
+			{
+				auto& bc2d = entity.GetComponent<BoxCollider2DComponent>();
+
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(bc2d.Size.x * worldScale.x, bc2d.Size.y * worldScale.y, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0.0f);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = bc2d.Density;
+				fixtureDef.friction = bc2d.Friction;
+				fixtureDef.restitution = bc2d.Restitution;
+				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+
+			if (entity.HasComponent<CircleCollider2DComponent>())
+			{
+				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
+				circleShape.m_radius = worldScale.x * cc2d.Radius;
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = cc2d.Density;
+				fixtureDef.friction = cc2d.Friction;
+				fixtureDef.restitution = cc2d.Restitution;
+				fixtureDef.restitutionThreshold = cc2d.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+
+			if (entity.HasComponent<ContactListenerComponent>())
+			{
+				auto& bc2d = entity.GetComponent<ContactListenerComponent>();
+
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(bc2d.Size.x * worldScale.x, bc2d.Size.y * worldScale.y, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0.0f);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = 1;
+				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+				fixtureDef.isSensor = true;
+				body->CreateFixture(&fixtureDef);
+			}
+		}
+	}
+
+	void Scene::OnPhysics2DStop()
+	{
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
+	}
+
+	void Scene::RenderScene(EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		// Draw sprites
+		{
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			std::vector<SpriteDrawItem> drawItems;
+			drawItems.reserve((size_t)group.size());
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				glm::mat4 worldTransform = GetWorldTransform(Entity { entity, this });
+				drawItems.push_back({ entity, sprite.SortingLayer, worldTransform[3].z });
+			}
+
+			std::stable_sort(drawItems.begin(), drawItems.end(), [](const SpriteDrawItem& a, const SpriteDrawItem& b)
+			{
+				if (a.SortingLayer != b.SortingLayer)
+					return a.SortingLayer < b.SortingLayer;
+				return a.WorldZ < b.WorldZ;
+			});
+
+			for (const auto& drawItem : drawItems)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(drawItem.EntityID);
+				RenderCommand::SetBlendMode(ToRendererBlendMode(sprite.RenderBlendMode));
+				RenderCommand::SetDepthTest(sprite.DepthTest);
+				RenderCommand::SetDepthWrite(sprite.DepthWrite);
+				RenderCommand::SetCull(sprite.Cull);
+
+				Renderer2D::DrawSprite(GetWorldTransform(Entity { drawItem.EntityID, this }), sprite, (int)drawItem.EntityID);
+			}
+
+			RenderCommand::SetBlendMode(RendererAPI::BlendMode::Alpha);
+			RenderCommand::SetDepthTest(true);
+			RenderCommand::SetDepthWrite(true);
+			RenderCommand::SetCull(false);
+		}
+
+		// Draw circles
+		{
+			auto view = m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+				Renderer2D::DrawCircle(GetWorldTransform(Entity { entity, this }), circle.Color, circle.Thickness, circle.Fade, (int)entity);
+			}
+		}
+
+		// Draw text
+		{
+			auto view = m_Registry.view<TransformComponent, TextComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, text] = view.get<TransformComponent, TextComponent>(entity);
+
+				Renderer2D::DrawString(text.TextString, GetWorldTransform(Entity { entity, this }), text, (int)entity);
+			}
+		}
+
+		Renderer2D::EndScene();
+	}
+  
+  template<typename T>
 	void Scene::OnComponentAdded(Entity entity, T& component)
 	{
-		static_assert(false);
+		static_assert(sizeof(T) == 0);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<IDComponent>(Entity entity, IDComponent& component)
+	{
 	}
 
 	template<>
@@ -111,11 +803,22 @@ namespace Ume
 	template<>
 	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
 	{
-		component.camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+		if (m_ViewportWidth > 0 && m_ViewportHeight > 0)
+			component.Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
+	{
 	}
 
 	template<>
 	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
 	{
 	}
 
@@ -128,4 +831,35 @@ namespace Ume
 	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
 	{
 	}
+
+	template<>
+	void Scene::OnComponentAdded<Rigidbody2D>(Entity entity, Rigidbody2D& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<BoxCollider2DComponent>(Entity entity, BoxCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ContactListenerComponent>(Entity entity, ContactListenerComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<RelationshipComponent>(Entity entity, RelationshipComponent& component)
+	{
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TextComponent>(Entity entity, TextComponent& component)
+	{
+	}
+
 }

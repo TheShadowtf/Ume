@@ -1,50 +1,87 @@
 #pragma once
 
-#include "Core.h"
-#include "Window.h"
-#include "Ume/Core/Layers/LayerStack.h"
-#include "Ume/Events/Event.h"
-#include "Ume/ImGui/ImGuiLayer.h"
-#include "Ume/Core/Timestep.h"
-#include "Ume/Renderer/Shader.h"
-#include "Ume/Renderer/Buffer.h"
-#include "Ume/Events/ApplicationEvent.h"
-#include "Ume/Renderer/VertexArray.h"
-#include "Ume/Renderer/OrthographicCamera.h"
+#include "Ume/Core/Base.h"
 
-namespace Ume
-{
-	class UME_API Application
+#include "Ume/Core/Window.h"
+#include "Ume/Core/LayerStack.h"
+#include "Ume/Events/Event.h"
+#include "Ume/Events/ApplicationEvent.h"
+
+#include "Ume/Core/Timestep.h"
+
+#include "Ume/ImGui/ImGuiLayer.h"
+
+int main(int argc, char** argv);
+
+namespace Ume {
+
+	struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			UME_CORE_ASSERT(index < Count);
+			return Args[index];
+		}
+	};
+
+	struct ApplicationSpecification
+	{
+		std::string Name = "Ume Application";
+		std::string WorkingDirectory;
+		uint32_t Width = 1600;
+		uint32_t Height = 900;
+		bool StartHidden = false;
+		ApplicationCommandLineArgs CommandLineArgs;
+	};
+
+	class Application
 	{
 	public:
-		Application(const std::string& name = "Ume App");
+		Application(const ApplicationSpecification& specification);
 		virtual ~Application();
 
-		void Run();
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
-		inline static Application& Get() { return *s_Instance; }
-
-		inline Window& GetWindow() { return *m_Window;  }
+		Window& GetWindow() { return *m_Window; }
 
 		void Close();
 
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+
+		static Application& Get() { return *s_Instance; }
+
+		const ApplicationSpecification& GetSpecification() const { return m_Specification; }
+
+		void SubmitToMainThread(const std::function<void()>& function);
 	private:
-		bool OnWindowClosed(WindowCloseEvent& e);
+		void Run();
+		bool OnWindowClose(WindowCloseEvent& e);
 		bool OnWindowResize(WindowResizeEvent& e);
+
+		void ExecuteMainThreadQueue();
 	private:
-		std::unique_ptr<Window> m_Window;
+		ApplicationSpecification m_Specification;
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 		float m_LastFrameTime = 0.0f;
+
+		std::vector<std::function<void()>> m_MainThreadQueue;
+		std::mutex m_MainThreadQueueMutex;
+	private:
 		static Application* s_Instance;
+		friend int ::main(int argc, char** argv);
 	};
 
-	Application* CreateApplication();
+	// To be defined in CLIENT
+	Application* CreateApplication(ApplicationCommandLineArgs args);
+
 }

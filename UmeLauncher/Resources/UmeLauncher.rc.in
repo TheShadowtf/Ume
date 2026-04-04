@@ -1,0 +1,4 @@
+// IDI_APPICON (numeric ID 1) = shown by Windows Explorer on the .exe file
+// GLFW_ICON   (string name)  = loaded by GLFW for the running window title bar + taskbar
+IDI_APPICON ICON "@UME_LAUNCHER_ICON@"
+GLFW_ICON   ICON "@UME_LAUNCHER_ICON@"

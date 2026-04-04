@@ -1,17 +1,20 @@
 #pragma once
 
-#include "Ume/Core/Layers/Layer.h"
+#include "Ume/Core/Layer.h"
+
 #include "Ume/Events/ApplicationEvent.h"
 #include "Ume/Events/KeyEvent.h"
 #include "Ume/Events/MouseEvent.h"
 
-namespace Ume
-{
-	class UME_API ImGuiLayer : public Layer
+#include <string>
+
+namespace Ume {
+
+	class ImGuiLayer : public Layer
 	{
 	public:
 		ImGuiLayer();
-		~ImGuiLayer();
+		~ImGuiLayer() = default;
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
@@ -20,9 +23,22 @@ namespace Ume
 		void Begin();
 		void End();
 
-		void BlockImGuiEvents(bool block) { m_BlockImGuiEvents = block; }
+		void BlockEvents(bool block) { m_BlockEvents = block; }
+		
+		void SetDarkThemeColors();
+		void SetLightThemeColors();
+		void SetHazelDarkThemeColors();
+
+		uint32_t GetActiveWidgetID() const;
+
 	private:
-		bool m_BlockImGuiEvents = true;
-		float m_Time = 0.0f;
+		void LoadCustomFonts();
+		void UploadFontsTexture();
+	private:
+		bool m_BlockEvents = true;
+		bool m_PendingCustomFontLoad = true;
+		int m_FrameCounter = 0;
+		std::string m_IniFilePath;
 	};
+
 }

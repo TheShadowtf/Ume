@@ -1,35 +1,34 @@
 #include "umepch.h"
-#include "Shader.h"
+#include "Ume/Renderer/Shader.h"
 
-#include "Renderer.h"
+#include "Ume/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/Vulkan/VulkanShader.h"
 
-namespace Ume
-{
-	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+namespace Ume {
+
+	Ref<Shader> Shader::Create(const std::string& filepath)
 	{
-		switch (Renderer::GetRendererAPI())
+		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:
-			UME_CORE_ASSERT(false, "RendererAPI::None is not suported");
-			return nullptr;
-		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGlShader>(name, vertexSrc, fragmentSrc);
+			case RendererAPI::API::None:    UME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(filepath);
+			case RendererAPI::API::Vulkan:  return CreateRef<VulkanShader>(filepath);
 		}
+
 		UME_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 
-	Ref<Shader> Shader::Create(const std::string& filepath)
+	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
-		switch (Renderer::GetRendererAPI())
+		switch (Renderer::GetAPI())
 		{
-		case RendererAPI::API::None:
-			UME_CORE_ASSERT(false, "RendererAPI::None is not suported");
-			return nullptr;
-		case RendererAPI::API::OpenGL:
-			return std::make_shared<OpenGlShader>(filepath);
+			case RendererAPI::API::None:    UME_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			case RendererAPI::API::OpenGL:  return CreateRef<OpenGLShader>(name, vertexSrc, fragmentSrc);
+			case RendererAPI::API::Vulkan:  return CreateRef<VulkanShader>(name, vertexSrc, fragmentSrc);
 		}
+
 		UME_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
@@ -46,26 +45,25 @@ namespace Ume
 		Add(name, shader);
 	}
 
-	Ume::Ref<Ume::Shader> ShaderLibrary::Load(const std::string& filePath)
+	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
-		auto shader = Shader::Create(filePath);
+		auto shader = Shader::Create(filepath);
 		Add(shader);
 		return shader;
 	}
 
-	Ume::Ref<Ume::Shader> ShaderLibrary::Load(const std::string& name, const std::string& filePath)
+	Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
 	{
-		auto shader = Shader::Create(filePath);
+		auto shader = Shader::Create(filepath);
 		Add(name, shader);
 		return shader;
 	}
 
-	Ume::Ref<Ume::Shader> ShaderLibrary::Get(const std::string& name)
+	Ref<Shader> ShaderLibrary::Get(const std::string& name)
 	{
-		UME_CORE_ASSERT(Exists(name), "Shader bot found!");
+		UME_CORE_ASSERT(Exists(name), "Shader not found!");
 		return m_Shaders[name];
 	}
-
 
 	bool ShaderLibrary::Exists(const std::string& name) const
 	{

@@ -1,22 +1,30 @@
 #include <Ume.h>
 #include <Ume/Core/EntryPoint.h>
 
-#include "SandboxLayer.h"
+#include "Sandbox2D.h"
+#include "ExampleLayer.h"
 
-class UmeEditor : public Ume::Application
+class Sandbox : public Ume::Application
 {
 public:
-	UmeEditor() : Application("Ume Editor")
+	Sandbox(const Ume::ApplicationSpecification& specification)
+		: Ume::Application(specification)
 	{
-		PushLayer(new EditorLayer());
+		// PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
-	~UmeEditor()
-	{
 
+	~Sandbox()
+	{
 	}
 };
 
-Ume::Application* Ume::CreateApplication()
+Ume::Application* Ume::CreateApplication(Ume::ApplicationCommandLineArgs args)
 {
-	return new UmeEditor();
+	ApplicationSpecification spec;
+	spec.Name = "Sandbox";
+	spec.WorkingDirectory = "../UmeEditor";
+	spec.CommandLineArgs = args;
+
+	return new Sandbox(spec);
 }
